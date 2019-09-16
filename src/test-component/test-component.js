@@ -80,6 +80,8 @@ class TestComponent extends Component {
 
     this.pickHelper = new PickHelper();
 
+    window.addEventListener( 'resize', this.onWindowResize, false );
+
     // window.addEventListener('mousedown', this.setPickPosition);
     // window.addEventListener('mouseup', this.clearPickPosition);
     // window.addEventListener('mouseleave', this.clearPickPosition);
@@ -157,6 +159,12 @@ class TestComponent extends Component {
     // unlikely to pick something
     this.pickPosition.x = -100000;
     this.pickPosition.y = -100000;
+  }
+
+  onWindowResize = () => {
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize( window.innerWidth, window.innerHeight );
   }
 
   render() {
