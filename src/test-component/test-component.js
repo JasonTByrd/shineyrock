@@ -1,164 +1,97 @@
 import React, { Component } from "react";
 import './test-component.css';
 import * as THREE from "three";
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { DeviceOrientationControls } from 'three/examples/jsm/controls/DeviceOrientationControls.js';
-
-class PickHelper {
-  constructor() {
-    this.raycaster = new THREE.Raycaster();
-    this.pickedObject = null;
-    this.pickedObjectSavedColor = 0;
-  }
-  pick(normalizedPosition, scene, camera) {
-    // cast a ray through the frustum
-    this.raycaster.setFromCamera(normalizedPosition, camera);
-    // get the list of objects the ray intersected
-    const intersectedObjects = this.raycaster.intersectObjects(scene.children);
-    if (intersectedObjects.length) {
-      this.pickedObject = intersectedObjects[0].object;
-    }
-    return this.pickedObject;
-  }
-}
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 
 class TestComponent extends Component {
 
-  pickPosition = {x: 0, y: 0};
-  mount;
-  renderer;
-  fov = 60;
-  aspect = 2;
-  near = 0.1;
-  far = 200;
+  scene; 
   camera;
-  color = 0xFFFFFF;
-  intensity = 1;
-  pickHelper;
-  scene;
-  light;
-  cameraPole;
-  canvas;
-
-  time = new Date().getTime();
-
-  colorFlashInteval;
+  renderer; 
+  mesh;
+  meshFloor;
+  controls;
+  mount;
+  
+  keyboard = new Array(100).fill(false);;
+  player;
 
   componentDidMount() {
-    this.camera = new THREE.PerspectiveCamera(this.fov, this.aspect, this.near, this.far);
+
+    console.log(this.keyboard);
+
+    window.addEventListener('keydown', this.keyDown);
+    window.addEventListener('keyup', this.keyUp);
+    window.addEventListener('keyup', this.keyUp);
+
+    this.useWireframe = false;
+    this.player = { height:1.8, speed:0.1, turnSpeed:Math.PI*0.02 }
     this.scene = new THREE.Scene();
-    this.cameraPole = new THREE.Object3D();
-
+    this.camera = new THREE.PerspectiveCamera(90, 1280/720, 0.1, 1000);
+    
+    this.mesh = new THREE.Mesh(
+      new THREE.BoxGeometry(1,1,1),
+      new THREE.MeshBasicMaterial({color:0xff4444, wireframe:this.useWireframe})
+    );
+    this.mesh.position.y += 1; // Move the mesh up 1 meter
+    this.scene.add(this.mesh);
+    
+    this.meshFloor = new THREE.Mesh(
+      new THREE.PlaneGeometry(10,10, 10,10),
+      new THREE.MeshBasicMaterial({color:0xffffff, wireframe:this.useWireframe})
+    );
+    this.meshFloor.rotation.x -= Math.PI / 2; // Rotate the floor 90 degrees
+    this.scene.add(this.meshFloor);
+    
+    this.camera.position.set(0, this.player.height, -5);
+    this.camera.lookAt(new THREE.Vector3(0,this.player.height,0));
+    
     this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize( window.innerWidth, window.innerHeight );
-    this.mount.appendChild( this.renderer.domElement );
+    this.renderer.setSize(1280, 720);
+    this.mount.appendChild(this.renderer.domElement);
 
-    this.canvas = this.renderer.domElement;
-
-    this.camera.position.z = 30;
-    this.light = new THREE.DirectionalLight(this.color, this.intensity);
-    this.camera.add(this.light);
-    this.scene.background = new THREE.Color('white');
-    this.scene.add(this.cameraPole);
-    this.cameraPole.add(this.camera);
-
-    this.pickHelper = new PickHelper();
-
-    window.addEventListener( 'resize', this.onWindowResize, false );
-
-    window.addEventListener('mousemove', this.setPickPosition);
-    window.addEventListener('mouseout', this.clearPickPosition);
-    window.addEventListener('mouseleave', this.clearPickPosition);
-
-    this.generateBoxes();
-    this.clearPickPosition();
-    this.onWindowResize();
-
+    this.controls = new PointerLockControls(this.camera);
+    
     this.animate();
   }
 
-  generateBoxes = () => {
-    const boxWidth = 1;
-    const boxHeight = 1;
-    const boxDepth = 1;
-    const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-    
-    function rand(min, max) {
-      if (max === undefined) {
-        max = min;
-        min = 0;
-      }
-      return min + (max - min) * Math.random();
-    }
-    
-    function randomColor() {
-      return `hsl(${rand(360) | 0}, ${rand(50, 100) | 0}%, 50%)`;
-    }
-    
-    const numObjects = 11;
-    for (let i = 0; i < numObjects; ++i) {
-      const material = new THREE.MeshPhongMaterial({
-        color: randomColor(),
-      });
-    
-      const cube = new THREE.Mesh(geometry, material);
-      cube.numberId = "this is a test" + i;
-      this.scene.add(cube);
-    
-      cube.position.set(rand(-20, 20), rand(-20, 20), rand(-20, 20));
-      cube.rotation.set(rand(Math.PI), rand(Math.PI), 0);
-      cube.scale.set(rand(3, 6), rand(3, 6), rand(3, 6));
-    }
-  }
-
   animate = () => {
-    this.cameraPole.rotation.y += 0.001;
-    requestAnimationFrame( this.animate );
 
-    this.renderer.render( this.scene, this.camera );
-  };
-
-  getCanvasRelativePosition = (event) => {
-    const rect = this.canvas.getBoundingClientRect();
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    };
+    requestAnimationFrame(this.animate);
+	
+    this.mesh.rotation.x += 0.01;
+    this.mesh.rotation.y += 0.02;
+    
+    // Keyboard movement inputs
+    if(this.keyboard[87]){ // W key
+      this.camera.translateZ( - this.player.speed );
+    }
+    if(this.keyboard[83]){ // S key
+      this.camera.translateZ( + this.player.speed );
+    }
+    if(this.keyboard[65]){ // A key
+      // Redirect motion by 90 degrees
+      this.camera.translateX( - this.player.speed );
+    }
+    if(this.keyboard[68]){ // D key
+      this.camera.translateX( + this.player.speed );
+    }
+    
+    this.renderer.render(this.scene, this.camera);
   }
-   
-  setPickPosition = (event) => {
-    const pos = this.getCanvasRelativePosition(event);
-    this.pickPosition.x = (pos.x / this.canvas.clientWidth ) *  2 - 1;
-    this.pickPosition.y = (pos.y / this.canvas.clientHeight) * -2 + 1;  // note we flip Y
 
-    this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
-    if(this.pickHelper.pick(this.pickPosition, this.scene, this.camera)) {
-      if(this.pickHelper.pick(this.pickPosition, this.scene, this.camera).numberId === "this is a test0") {
-        let picked = this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
-        clearInterval(this.colorFlashInteval);
-        this.colorFlashInteval = setInterval(() => {
-          if(picked.material.emissive.r === 1) {
-            picked.material.emissive.setHex(0x00FF00);
-          } else {
-            picked.material.emissive.setHex(0xFF0000);
-          }
-        }, 50);
-      };
+  canvasClick = () => {
+    if(!this.controls.lock(false)) {
+      this.controls.lock(false);
     }
   }
-   
-  canvasClick = (event) => {
-    this.setPickPosition(event);
-    this.pickHelper.pick(this.pickPosition, this.scene, this.camera, this.time);
-  }
 
-  clearPickPosition = () => {
-    // unlike the mouse which always has a position
-    // if the user stops touching the screen we want
-    // to stop picking. For now we just pick a value
-    // unlikely to pick something
-    this.pickPosition.x = -100000;
-    this.pickPosition.y = -100000;
+  keyDown = (event) => {
+    this.keyboard[event.keyCode] = true;
+  }
+  
+  keyUp = (event) => {
+    this.keyboard[event.keyCode] = false;
   }
 
   onWindowResize = () => {
