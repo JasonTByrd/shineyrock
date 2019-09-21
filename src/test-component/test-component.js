@@ -10,55 +10,39 @@ class PickHelper {
     this.pickedObject = null;
     this.pickedObjectSavedColor = 0;
   }
-  pick(normalizedPosition, scene, camera, time) {
-    // restore the color if there is a picked object
-    if (this.pickedObject) {
-      this.pickedObject.material.emissive.setHex(this.pickedObjectSavedColor);
-      this.pickedObject = undefined;
-    }
- 
+  pick(normalizedPosition, scene, camera) {
     // cast a ray through the frustum
     this.raycaster.setFromCamera(normalizedPosition, camera);
     // get the list of objects the ray intersected
     const intersectedObjects = this.raycaster.intersectObjects(scene.children);
     if (intersectedObjects.length) {
-      // pick the first object. It's the closest one
       this.pickedObject = intersectedObjects[0].object;
-      // save its color
-      this.pickedObjectSavedColor = this.pickedObject.material.emissive.getHex();
-      // set its emissive color to flashing red/yellow
-      this.pickedObject.material.emissive.setHex((time * 8) % 2 > 1 ? 0xFFFF00 : 0xFF0000);
     }
+    return this.pickedObject;
   }
 }
 
 class TestComponent extends Component {
 
   pickPosition = {x: 0, y: 0};
-
   mount;
-
   renderer;
-
   fov = 60;
-  aspect = 2;  // the canvas default
+  aspect = 2;
   near = 0.1;
   far = 200;
   camera;
-
   color = 0xFFFFFF;
   intensity = 1;
-
   pickHelper;
-   
   scene;
-   
   light;
-  // put the camera on a pole (parent it to an object)
-  // so we can spin the pole to move the camera around the scene
   cameraPole;
-
   canvas;
+
+  time = new Date().getTime();
+
+  colorFlashInteval;
 
   componentDidMount() {
     this.camera = new THREE.PerspectiveCamera(this.fov, this.aspect, this.near, this.far);
@@ -82,12 +66,13 @@ class TestComponent extends Component {
 
     window.addEventListener( 'resize', this.onWindowResize, false );
 
-    // window.addEventListener('mousedown', this.setPickPosition);
-    // window.addEventListener('mouseup', this.clearPickPosition);
-    // window.addEventListener('mouseleave', this.clearPickPosition);
+    window.addEventListener('mousemove', this.setPickPosition);
+    window.addEventListener('mouseout', this.clearPickPosition);
+    window.addEventListener('mouseleave', this.clearPickPosition);
 
     this.generateBoxes();
     this.clearPickPosition();
+    this.onWindowResize();
 
     this.animate();
   }
@@ -110,13 +95,14 @@ class TestComponent extends Component {
       return `hsl(${rand(360) | 0}, ${rand(50, 100) | 0}%, 50%)`;
     }
     
-    const numObjects = 100;
+    const numObjects = 11;
     for (let i = 0; i < numObjects; ++i) {
       const material = new THREE.MeshPhongMaterial({
         color: randomColor(),
       });
     
       const cube = new THREE.Mesh(geometry, material);
+      cube.numberId = "this is a test" + i;
       this.scene.add(cube);
     
       cube.position.set(rand(-20, 20), rand(-20, 20), rand(-20, 20));
@@ -125,12 +111,11 @@ class TestComponent extends Component {
     }
   }
 
-  animate = () => {  
+  animate = () => {
     this.cameraPole.rotation.y += 0.001;
     requestAnimationFrame( this.animate );
 
     this.renderer.render( this.scene, this.camera );
-    this.clearPickPosition();
   };
 
   getCanvasRelativePosition = (event) => {
@@ -145,6 +130,21 @@ class TestComponent extends Component {
     const pos = this.getCanvasRelativePosition(event);
     this.pickPosition.x = (pos.x / this.canvas.clientWidth ) *  2 - 1;
     this.pickPosition.y = (pos.y / this.canvas.clientHeight) * -2 + 1;  // note we flip Y
+
+    this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
+    if(this.pickHelper.pick(this.pickPosition, this.scene, this.camera)) {
+      if(this.pickHelper.pick(this.pickPosition, this.scene, this.camera).numberId === "this is a test0") {
+        let picked = this.pickHelper.pick(this.pickPosition, this.scene, this.camera);
+        clearInterval(this.colorFlashInteval);
+        this.colorFlashInteval = setInterval(() => {
+          if(picked.material.emissive.r === 1) {
+            picked.material.emissive.setHex(0x00FF00);
+          } else {
+            picked.material.emissive.setHex(0xFF0000);
+          }
+        }, 50);
+      };
+    }
   }
    
   canvasClick = (event) => {
@@ -162,14 +162,14 @@ class TestComponent extends Component {
   }
 
   onWindowResize = () => {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.aspect = this.mount.clientWidth / this.mount.clientHeight;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize( window.innerWidth, window.innerHeight );
+    this.renderer.setSize( this.mount.clientWidth, this.mount.clientHeight );
   }
 
   render() {
     return (
-      <div>
+      <div className="page-container">
         <div ref={ref => (this.mount = ref)} onClick={e => this.canvasClick(e)}></div>
 
         <div className="textbox-popup">
