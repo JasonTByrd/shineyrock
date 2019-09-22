@@ -34,14 +34,33 @@ class PickHelper {
     return this.pickedObject;
   }
 
+  pickOnce(event, scene, camera, mount) {
+    this.setPickPosition(event, mount);
+    let normalizedPosition = this.pickPosition;
+    // cast a ray through the frustum
+    this.raycaster.setFromCamera(normalizedPosition, camera);
+    // get the list of objects the ray intersected
+    const intersectedObjects = this.raycaster.intersectObjects(scene.children);
+    if (intersectedObjects.length) {
+      if(intersectedObjects[0].object === this.pickedObject) {
+        return false;
+      }
+      this.pickedObject = intersectedObjects[0].object;
+    }
+    else {
+      this.pickedObject = false;
+    }
+    return this.pickedObject;
+  }
+
   setPickPosition = (event, mount) => {
-    const pos = this.getCanvasRelativePosition(event);
+    const pos = this.getCanvasRelativePosition(event, mount);
     this.pickPosition.x = (pos.x / mount.clientWidth ) *  2 - 1;
     this.pickPosition.y = (pos.y / mount.clientHeight) * -2 + 1;  // note we flip Y
   }
 
-  getCanvasRelativePosition = (event) => {
-    const rect = document.querySelector('.pickableCanvas').getBoundingClientRect();
+  getCanvasRelativePosition = (event, mount) => {
+    const rect = mount.getBoundingClientRect();
     return {
       x: event.clientX - rect.left,
       y: event.clientY - rect.top,
@@ -74,6 +93,7 @@ class TestComponent extends Component {
   controls;
   mount;
   pickHelper;
+  colorFlashInteval;
   
   keyboard = new Array(100).fill(false);
   player;
@@ -82,6 +102,7 @@ class TestComponent extends Component {
 
     console.log(this.keyboard);
 
+    window.addEventListener('mousemove', this.mouseMoveSelection);
     window.addEventListener('keydown', this.keyDown);
     window.addEventListener('keyup', this.keyUp);
     window.addEventListener('keyup', this.keyUp);
@@ -166,6 +187,20 @@ class TestComponent extends Component {
       }
     }
     console.log(this.pickHelper.pick(event, this.scene, this.camera, this.mount));
+  }
+
+  mouseMoveSelection = (event) => {
+    let picked = this.pickHelper.pickOnce(event, this.scene, this.camera, this.mount);
+    if (picked) {
+      clearInterval(this.colorFlashInteval);
+      this.colorFlashInteval = setInterval(() => {
+        if(picked.material.wireframe === false) {
+          picked.material.wireframe = true;
+        } else {
+          picked.material.wireframe = false;
+        }
+      }, 50);
+    }
   }
   
   keyDown = (event) => {
