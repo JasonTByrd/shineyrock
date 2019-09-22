@@ -14,6 +14,7 @@ class PickHelper {
     this.raycaster = new THREE.Raycaster();
     this.pickedObject = null;
     this.pickedObjectSavedColor = 0;
+    this.hover = null;
     this.scene = scene;
     this.camera = camera;
   }
@@ -51,6 +52,36 @@ class PickHelper {
       this.pickedObject = false;
     }
     return this.pickedObject;
+  }
+
+  getHover(event, scene, camera, mount) {
+    this.setPickPosition(event, mount);
+    let hovering = false;
+    let normalizedPosition = this.pickPosition;
+    // cast a ray through the frustum
+    this.raycaster.setFromCamera(normalizedPosition, camera);
+    // get the list of objects the ray intersected
+    const intersectedObjects = this.raycaster.intersectObjects(scene.children);
+    if (intersectedObjects.length) {
+      if(intersectedObjects[0].object === this.hover) {
+        hovering = true;
+      }
+      else {
+        hovering = false;
+        this.hover = intersectedObjects[0].object;
+      }
+    }
+    else {
+      hovering = false;
+      this.hover = false;
+    }
+
+    if(hovering === true) {
+      
+    }
+    else {
+      return this.hover;
+    }
   }
 
   setPickPosition = (event, mount) => {
@@ -190,17 +221,37 @@ class TestComponent extends Component {
   }
 
   mouseMoveSelection = (event) => {
-    let picked = this.pickHelper.pickOnce(event, this.scene, this.camera, this.mount);
-    if (picked) {
-      clearInterval(this.colorFlashInteval);
-      this.colorFlashInteval = setInterval(() => {
-        if(picked.material.wireframe === false) {
-          picked.material.wireframe = true;
-        } else {
-          picked.material.wireframe = false;
-        }
-      }, 50);
+    let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
+    if(picked === this.mesh && picked !== false) {
+      this.mesh.material.wireframe = true;
     }
+    else {
+      this.mesh.material.wireframe = false;
+    }
+
+    if(picked === this.meshFloor && picked !== false) {
+      this.meshFloor.material.wireframe = true;
+    }
+    else {
+      this.meshFloor.material.wireframe = false;
+    }
+
+
+
+
+
+
+    // let picked = this.pickHelper.getHover(event, this.scene, this.camera, this.mount);
+    // if (picked) {
+    //   clearInterval(this.colorFlashInteval);
+    //   this.colorFlashInteval = setInterval(() => {
+    //     if(picked.material.wireframe === false) {
+    //       picked.material.wireframe = true;
+    //     } else {
+    //       picked.material.wireframe = false;
+    //     }
+    //   }, 50);
+    // }
   }
   
   keyDown = (event) => {
