@@ -22,9 +22,9 @@ class PickHelper {
   pick(event, scene, camera, mount) {
     this.setPickPosition(event, mount);
     let normalizedPosition = this.pickPosition;
-    // cast a ray through the frustum
+
     this.raycaster.setFromCamera(normalizedPosition, camera);
-    // get the list of objects the ray intersected
+
     const intersectedObjects = this.raycaster.intersectObjects(scene.children);
     if (intersectedObjects.length) {
       this.pickedObject = intersectedObjects[0].object;
@@ -38,9 +38,9 @@ class PickHelper {
   pickOnce(event, scene, camera, mount) {
     this.setPickPosition(event, mount);
     let normalizedPosition = this.pickPosition;
-    // cast a ray through the frustum
+
     this.raycaster.setFromCamera(normalizedPosition, camera);
-    // get the list of objects the ray intersected
+
     const intersectedObjects = this.raycaster.intersectObjects(scene.children);
     if (intersectedObjects.length) {
       if(intersectedObjects[0].object === this.pickedObject) {
@@ -52,36 +52,6 @@ class PickHelper {
       this.pickedObject = false;
     }
     return this.pickedObject;
-  }
-
-  getHover(event, scene, camera, mount) {
-    this.setPickPosition(event, mount);
-    let hovering = false;
-    let normalizedPosition = this.pickPosition;
-    // cast a ray through the frustum
-    this.raycaster.setFromCamera(normalizedPosition, camera);
-    // get the list of objects the ray intersected
-    const intersectedObjects = this.raycaster.intersectObjects(scene.children);
-    if (intersectedObjects.length) {
-      if(intersectedObjects[0].object === this.hover) {
-        hovering = true;
-      }
-      else {
-        hovering = false;
-        this.hover = intersectedObjects[0].object;
-      }
-    }
-    else {
-      hovering = false;
-      this.hover = false;
-    }
-
-    if(hovering === true) {
-      
-    }
-    else {
-      return this.hover;
-    }
   }
 
   setPickPosition = (event, mount) => {
