@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import './test-component.css';
 import * as THREE from "three";
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
+import pickerHelper from "picker-helper"
 
 
 
@@ -102,7 +103,7 @@ class TestComponent extends Component {
 
   clickOnObject = (event) => {
     //console.log('test', event);
-    let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
+    let picked = pickerHelper.pick(event, this.scene, this.camera, this.mount);
     if (picked) {
       if (picked.material.wireframe === true) {
         picked.material.wireframe = false;
@@ -111,11 +112,11 @@ class TestComponent extends Component {
         picked.material.wireframe = true;
       }
     }
-    console.log(this.pickHelper.pick(event, this.scene, this.camera, this.mount));
+    console.log(pickerHelper.pick(event, this.scene, this.camera, this.mount));
   }
 
   mouseMoveSelection = (event) => {
-    let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
+    let picked = pickerHelper.pick(event, this.scene, this.camera, this.mount);
     if(picked === this.mesh && picked !== false) {
       this.mesh.material.wireframe = true;
     }
