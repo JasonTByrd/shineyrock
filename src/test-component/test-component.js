@@ -62,7 +62,7 @@ class TestComponent extends Component {
 
     this.controls = new PointerLockControls(this.camera);
 
-    this.pickHelper = new PickHelper(this.scene, this.camera);
+    this.pickerHelper = new pickerHelper(this.scene, this.camera);
     console.log(this.scene, this.pickHelper.scene)
 
     window.addEventListener('click', this.clickOnObject);
