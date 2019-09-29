@@ -7,6 +7,13 @@ import PickHelper from "pickhelper"
 
 class TestComponent extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      crossHair: false,
+    }
+  }
+
   scene; 
   camera;
   renderer; 
@@ -16,6 +23,7 @@ class TestComponent extends Component {
   mount;
   pickHelper;
   colorFlashInteval;
+  pointerLockedStatus = false;
   
   keyboard = new Array(100).fill(false);
   player;
@@ -31,7 +39,7 @@ class TestComponent extends Component {
     window.addEventListener('resize', this.onWindowResize, false );
 
     this.useWireframe = false;
-    this.player = { height:1.8, speed:0.1, turnSpeed:Math.PI*0.02 }
+    this.player = { height:1.0, speed:0.08, turnSpeed:Math.PI*0.02 }
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(90, 1280/720, 0.1, 1000);
     
@@ -58,10 +66,12 @@ class TestComponent extends Component {
 
     this.controls = new PointerLockControls(this.camera);
 
-    this.pickerHelper = new PickHelper(this.scene, this.camera);
-    console.log(this.scene, this.pickerHelper.scene)
+    this.pickHelper = new PickHelper(this.scene, this.camera);
+    console.log(this.scene, this.pickHelper.scene)
 
     window.addEventListener('click', this.clickOnObject);
+
+    document.addEventListener('pointerlockchange', this.pointerLocked);
 
     this.onWindowResize();
     
@@ -74,22 +84,43 @@ class TestComponent extends Component {
 	
     this.mesh.rotation.x += 0.01;
     this.mesh.rotation.y += 0.02;
+
+    if (this.pointerLockedStatus) {
+      let picked = this.pickHelper.pickCenter(this.scene, this.camera, this.mount);
+      if (picked === this.mesh && picked !== false) {
+        this.mesh.material.wireframe = true;
+      }
+      else {
+        this.mesh.material.wireframe = false;
+      }
+
+      if (picked === this.meshFloor && picked !== false) {
+        this.meshFloor.material.wireframe = true;
+      }
+      else {
+        this.meshFloor.material.wireframe = false;
+      }
     
-    // Keyboard movement inputs
-    if(this.keyboard[87]){ // W key
-      this.camera.translateZ( - this.player.speed );
-    }
-    if(this.keyboard[83]){ // S key
-      this.camera.translateZ( + this.player.speed );
-    }
-    if(this.keyboard[65]){ // A key
-      // Redirect motion by 90 degrees
-      this.camera.translateX( - this.player.speed );
-    }
-    if(this.keyboard[68]){ // D key
-      this.camera.translateX( + this.player.speed );
+      // Keyboard movement inputs
+      if(this.keyboard[87]){ // W key
+        this.camera.translateZ( - this.player.speed );
+      }
+      if(this.keyboard[83]){ // S key
+        this.camera.translateZ( + this.player.speed );
+      }
+      if(this.keyboard[65]){ // A key
+        // Redirect motion by 90 degrees
+        this.camera.translateX( - this.player.speed );
+      }
+      if(this.keyboard[68]){ // D key
+        this.camera.translateX( + this.player.speed );
+      }
+
+    } else {
+
     }
     
+    this.camera.position.y = this.player.height;
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -99,32 +130,48 @@ class TestComponent extends Component {
 
   clickOnObject = (event) => {
     //console.log('test', event);
-    let picked = this.pickerHelper.pick(event, this.scene, this.camera, this.mount);
-    if (picked) {
-      if (picked.material.wireframe === true) {
-        picked.material.wireframe = false;
+    if (this.pointerLockedStatus) {
+      let picked = this.pickHelper.pickCenter(this.scene, this.camera, this.mount);
+      if (picked) {
+        if (picked.material.wireframe === true) {
+          picked.material.wireframe = false;
+        }
+        else {
+          picked.material.wireframe = true;
+        }
       }
-      else {
-        picked.material.wireframe = true;
+      console.log(this.pickHelper.pickCenter(this.scene, this.camera, this.mount));
+    } else {
+      let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
+      if (picked) {
+        if (picked.material.wireframe === true) {
+          picked.material.wireframe = false;
+        }
+        else {
+          picked.material.wireframe = true;
+        }
       }
+      console.log(this.pickHelper.pick(event, this.scene, this.camera, this.mount));
     }
-    console.log(this.pickerHelper.pick(event, this.scene, this.camera, this.mount));
   }
 
   mouseMoveSelection = (event) => {
-    let picked = this.pickerHelper.pick(event, this.scene, this.camera, this.mount);
-    if(picked === this.mesh && picked !== false) {
-      this.mesh.material.wireframe = true;
-    }
-    else {
-      this.mesh.material.wireframe = false;
-    }
+    if (this.pointerLockedStatus) {
+    } else {
+      let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
+      if (picked === this.mesh && picked !== false) {
+        this.mesh.material.wireframe = true;
+      }
+      else {
+        this.mesh.material.wireframe = false;
+      }
 
-    if(picked === this.meshFloor && picked !== false) {
-      this.meshFloor.material.wireframe = true;
-    }
-    else {
-      this.meshFloor.material.wireframe = false;
+      if (picked === this.meshFloor && picked !== false) {
+        this.meshFloor.material.wireframe = true;
+      }
+      else {
+        this.meshFloor.material.wireframe = false;
+      }
     }
   }
   
@@ -136,23 +183,26 @@ class TestComponent extends Component {
     this.keyboard[event.keyCode] = false;
   }
 
+  pointerLocked = () => {
+    this.pointerLockedStatus = !this.pointerLockedStatus;
+    this.setState({crossHair: !this.state.crossHair});
+    console.log(this.pointerLockedStatus, this.state.crossHair);
+  }
+
   onWindowResize = () => {
+    console.log(this.mount.clientWidth, this.mount.clientHeight);
     this.camera.aspect = this.mount.clientWidth / this.mount.clientHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize( this.mount.clientWidth, this.mount.clientHeight );
   }
 
-  render() {
+  render = () => {
     return (
       <div className="page-container">
-        <div className="pickableCanvas" ref={ref => (this.mount = ref)} onClick={e => this.canvasClick(e)}></div>
-
-        <div className="textbox-popup">
-          <p>
-          You've clicked(or touched) an orb!{"\n"} 
-          Click(or touch) one again to make me go away.{"\n"}
-          (Hint: Look behind you.)
-          </p>
+        <div className="pickableCanvas" ref={ref => (this.mount = ref)} onClick={e => this.canvasClick(e)}>
+          {this.state.crossHair &&
+            <div className="cross-hair"></div>
+          }
         </div>
       </div>
     )
