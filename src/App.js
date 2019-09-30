@@ -1,13 +1,13 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import TestComponent from './test-component/test-component.js'
+import CanvasComponent from './canvas-component/canvas-component.js'
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        {/* <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
@@ -18,8 +18,8 @@ function App() {
           rel="noopener noreferrer"
         >
           Learn React
-        </a>
-        <TestComponent></TestComponent>
+        </a> */}
+        <CanvasComponent></CanvasComponent>
       </header>
     </div>
   );

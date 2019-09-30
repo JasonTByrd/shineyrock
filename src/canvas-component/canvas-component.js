@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import './test-component.css';
+import './canvas-component.css';
 import * as THREE from "three";
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
-import PickHelper from "pickhelper"
+import PickHelper from "pick-helper"
 
 
-class TestComponent extends Component {
+class CanvasComponent extends Component {
 
   constructor(props) {
     super(props);
@@ -209,4 +209,4 @@ class TestComponent extends Component {
   }
 }
 
-export default TestComponent;
+export default CanvasComponent;
