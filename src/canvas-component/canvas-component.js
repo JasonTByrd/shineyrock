@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import './canvas-component.css';
 import * as THREE from "three";
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
-import PickHelper from "pick-helper"
+import PickHelper from "pick-helper";
+import { connect } from 'react-redux';
+import * as actionTypes from '../store/actions'
 
 
 class CanvasComponent extends Component {
@@ -10,7 +12,7 @@ class CanvasComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      crossHair: false,
+      //crossHair: false,
     }
   }
 
@@ -24,6 +26,7 @@ class CanvasComponent extends Component {
   pickHelper;
   colorFlashInteval;
   pointerLockedStatus = false;
+  payload = 5;
   
   keyboard = new Array(100).fill(false);
   player;
@@ -185,8 +188,8 @@ class CanvasComponent extends Component {
 
   pointerLocked = () => {
     this.pointerLockedStatus = !this.pointerLockedStatus;
-    this.setState({crossHair: !this.state.crossHair});
-    console.log(this.pointerLockedStatus, this.state.crossHair);
+    this.setState(this.props.onTrueFalse(this.payload));
+    console.log(this.pointerLockedStatus, this.props.cross);
   }
 
   onWindowResize = () => {
@@ -200,7 +203,7 @@ class CanvasComponent extends Component {
     return (
       <div className="page-container">
         <div className="pickableCanvas" ref={ref => (this.mount = ref)} onClick={e => this.canvasClick(e)}>
-          {this.state.crossHair &&
+          {this.props.cross &&
             <div className="cross-hair"></div>
           }
         </div>
@@ -209,4 +212,19 @@ class CanvasComponent extends Component {
   }
 }
 
-export default CanvasComponent;
+const mapStateToProps = state => {
+  return {
+    cross: state.crossHair
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onTrueFalse: (payload) => {
+      console.log(payload);
+      dispatch({type: actionTypes.TRUE_FALSE, payload: payload});
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CanvasComponent);
