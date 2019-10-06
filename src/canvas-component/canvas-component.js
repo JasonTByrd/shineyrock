@@ -221,7 +221,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onTrueFalse: (payload) => {
-      console.log(payload);
       dispatch({type: actionTypes.TRUE_FALSE, payload: payload});
     }
   }
