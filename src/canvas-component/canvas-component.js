@@ -8,6 +8,12 @@ import * as actionTypes from '../store/actions'
 import { Water } from 'three/examples/jsm/objects/Water.js';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import waternormals from '../assets/textures/water/waternormals.jpg';
+import droidSans from '../assets/fonts/droid/droid_sans_bold.typeface.json'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 
 
 class CanvasComponent extends Component {
@@ -42,13 +48,32 @@ class CanvasComponent extends Component {
   parameters;
   cubeCamera;
 
+  //fontLoader
+  fontLoader;
+  textMesh;
+  textGeometry;
+  selectedFont;
+  textMaterial;
+  threeFont;
+
+  //Lights
+  pointLight01;
+  pointLightOrb01;
+  pointLightGroup01;
+
+  //rendering
+  renderPass;
+  fxaaPass;
+  pixelRatio;
+  composer1;
+  copyPass;
+  composer2;
+
   
   keyboard = new Array(100).fill(false);
   player;
 
   componentDidMount() {
-
-    console.log(this.keyboard);
 
     window.addEventListener('mousemove', this.mouseMoveSelection);
     window.addEventListener('keydown', this.keyDown);
@@ -58,14 +83,27 @@ class CanvasComponent extends Component {
 
 
     this.useWireframe = false;
-    this.player = { height:1.0, speed:0.08, turnSpeed:Math.PI*0.02 }
+    this.player = { height:1.5, speed:0.08, turnSpeed:Math.PI*0.02 }
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(55, 1280/720, 1, 20000);
 
+    this.scene.fog = new THREE.FogExp2( 0x080305, 0.0700 );
 
 
-    this.light = new THREE.DirectionalLight( 0xffffff, 0.8 );
+    this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
     this.scene.add( this.light );
+
+    this.pointLight01 = new THREE.PointLight(0xffffff, 0.55);
+    this.pointLightOrb01 = new THREE.Mesh(
+      new THREE.SphereGeometry(0.05,0.05,0.05),
+      new THREE.MeshBasicMaterial({color:0xffffff, wireframe:this.useWireframe})
+    );
+    this.pointLightGroup01 = new THREE.Group();
+    //this.pointLightGroup01.add(this.pointLightOrb01);
+    this.pointLightGroup01.add(this.pointLight01);
+    this.camera.add(this.pointLightGroup01);
+    this.pointLightGroup01.position.set(0,3,-5);
+    this.scene.add(this.camera)
 
     //water
 
@@ -73,12 +111,27 @@ class CanvasComponent extends Component {
 
     //water
 
+    //fontLoader
+    this.threeFont = new THREE.Font(droidSans);
+    this.textMaterial = new THREE.MeshPhongMaterial({color: 0xffffff});
+    this.textGeometry = new THREE.TextGeometry("Shineyrock.org", {
+        font: this.threeFont,
+        size: 2,
+        height: 0.2
+    });
+    this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
+    this.textMesh.position.y += 5;
+    this.textMesh.position.x -= 12;
+    this.textMesh.position.z -= 15;
+    this.scene.add(this.textMesh);
 
+    console.log(this.fontLoader, this.textGeometry, this.selectedFont);
 
+    //fontLoader
     
     this.mesh = new THREE.Mesh(
-      new THREE.BoxGeometry(1,1,1),
-      new THREE.MeshBasicMaterial({color:0xff4444, wireframe:this.useWireframe})
+      new THREE.SphereGeometry(0.5, 25, 25),
+      new THREE.MeshPhongMaterial({color:0xff4444, wireframe:this.useWireframe})
     );
     this.mesh.position.y += 2;
     this.scene.add(this.mesh);
@@ -88,20 +141,37 @@ class CanvasComponent extends Component {
       new THREE.MeshBasicMaterial({color:0xffffff, wireframe:this.useWireframe})
     );
     this.meshFloor.rotation.x -= Math.PI / 2; // Rotate the floor 90 degrees
-    this.meshFloor.position.y += 2;
+    this.meshFloor.position.y += 5;
     this.scene.add(this.meshFloor);
     
     this.camera.position.set(-1, this.player.height, 5);
-    this.camera.lookAt(new THREE.Vector3(0,this.player.height,0));
+    //this.camera.lookAt(new THREE.Vector3(0,this.player.height,0));
     
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.mount.appendChild(this.renderer.domElement);
 
+
+    //rendering
+
+
+    this.renderPass = new RenderPass( this.scene, this.camera );
+    this.fxaaPass = new ShaderPass( FXAAShader );
+    this.pixelRatio = this.renderer.getPixelRatio();
+
+    this.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.mount.offsetWidth * this.pixelRatio );
+    this.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.mount.offsetHeight * this.pixelRatio );
+
+    this.composer1 = new EffectComposer( this.renderer );
+    this.composer1.addPass( this.renderPass );
+    this.composer1.addPass( this.fxaaPass );
+
+    //rendering
+
     this.controls = new PointerLockControls(this.camera);
 
     this.pickHelper = new PickHelper(this.scene, this.camera);
-    console.log(this.scene, this.pickHelper.scene)
+    //console.log(this.scene, this.pickHelper.scene)
 
 
 
@@ -159,14 +229,14 @@ class CanvasComponent extends Component {
     this.uniforms = this.sky.material.uniforms;
 
     this.uniforms[ 'turbidity' ].value = 10;
-    this.uniforms[ 'rayleigh' ].value = 2;
-    this.uniforms[ 'luminance' ].value = 1;
-    this.uniforms[ 'mieCoefficient' ].value = 0.010;
-    this.uniforms[ 'mieDirectionalG' ].value = 0.8;
+    this.uniforms[ 'rayleigh' ].value = 4;
+    this.uniforms[ 'luminance' ].value = 1.0;
+    this.uniforms[ 'mieCoefficient' ].value = 0.0;
+    this.uniforms[ 'mieDirectionalG' ].value = 0.0;
 
     this.parameters = {
       distance: 400,
-      inclination: 0.49,
+      inclination: 0.51,
       azimuth: 0.205
     };
 
@@ -258,9 +328,10 @@ class CanvasComponent extends Component {
     } else {
 
     }
-    
+
     this.camera.position.y = this.player.height;
     this.renderer.render(this.scene, this.camera);
+    this.composer1.render();
   }
 
   canvasClick = () => {
@@ -329,7 +400,7 @@ class CanvasComponent extends Component {
   }
 
   onWindowResize = () => {
-    console.log(this.mount.clientWidth, this.mount.clientHeight);
+    //console.log(this.mount.clientWidth, this.mount.clientHeight);
     this.camera.aspect = this.mount.clientWidth / this.mount.clientHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize( this.mount.clientWidth, this.mount.clientHeight );
