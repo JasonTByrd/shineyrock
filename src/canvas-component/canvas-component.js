@@ -41,6 +41,7 @@ class CanvasComponent extends Component {
   waterGeometry;
   water;
   light;
+  waterUniforms;
 
   //skybox
   sky;
@@ -68,6 +69,12 @@ class CanvasComponent extends Component {
   composer1;
   copyPass;
   composer2;
+  bloomPass;
+  bloomComposer;
+  bloomParams;
+
+  //reflection
+  cubeCameraTexture;
 
   
   keyboard = new Array(100).fill(false);
@@ -86,8 +93,13 @@ class CanvasComponent extends Component {
     this.player = { height:1.5, speed:0.08, turnSpeed:Math.PI*0.02 }
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(55, 1280/720, 1, 20000);
+    this.cubeCameraTexture = new THREE.CubeCamera( 1, 10000, 128 );
+    this.cubeCamera = new THREE.CubeCamera( 0.1, 1, 512 );
+    this.cubeCamera.renderTarget.texture.generateMipmaps = true;
+    this.cubeCamera.renderTarget.texture.minFilter = THREE.LinearMipmapLinearFilter;
+    this.scene.background = this.cubeCamera.renderTarget;
 
-    this.scene.fog = new THREE.FogExp2( 0x080305, 0.0700 );
+    this.scene.fog = new THREE.FogExp2( 0x080305, 0.0400 );
 
 
     this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
@@ -102,7 +114,7 @@ class CanvasComponent extends Component {
     //this.pointLightGroup01.add(this.pointLightOrb01);
     this.pointLightGroup01.add(this.pointLight01);
     this.camera.add(this.pointLightGroup01);
-    this.pointLightGroup01.position.set(0,3,-5);
+    this.pointLightGroup01.position.set(0,0,0);
     this.scene.add(this.camera)
 
     //water
@@ -113,7 +125,7 @@ class CanvasComponent extends Component {
 
     //fontLoader
     this.threeFont = new THREE.Font(droidSans);
-    this.textMaterial = new THREE.MeshPhongMaterial({color: 0xffffff});
+    this.textMaterial = new THREE.MeshLambertMaterial({color: 0xff4444});
     this.textGeometry = new THREE.TextGeometry("Shineyrock.org", {
         font: this.threeFont,
         size: 2,
@@ -123,6 +135,7 @@ class CanvasComponent extends Component {
     this.textMesh.position.y += 5;
     this.textMesh.position.x -= 12;
     this.textMesh.position.z -= 15;
+    this.textMesh.castShadow = true;
     this.scene.add(this.textMesh);
 
     console.log(this.fontLoader, this.textGeometry, this.selectedFont);
@@ -130,10 +143,11 @@ class CanvasComponent extends Component {
     //fontLoader
     
     this.mesh = new THREE.Mesh(
-      new THREE.SphereGeometry(0.5, 25, 25),
-      new THREE.MeshPhongMaterial({color:0xff4444, wireframe:this.useWireframe})
+      new THREE.OctahedronGeometry(0.5, 2),
+      new THREE.MeshPhongMaterial({color:0xffffff, wireframe:this.useWireframe, side: THREE.DoubleSide, flatShading: true, roughness: 0.0, envMap: this.cubeCamera.renderTarget.texture})
     );
     this.mesh.position.y += 2;
+    this.mesh.castShadow = true;
     this.scene.add(this.mesh);
     
     this.meshFloor = new THREE.Mesh(
@@ -148,11 +162,20 @@ class CanvasComponent extends Component {
     //this.camera.lookAt(new THREE.Vector3(0,this.player.height,0));
     
     this.renderer = new THREE.WebGLRenderer();
+    this.renderer.shadowMapEnabled = true;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.mount.appendChild(this.renderer.domElement);
 
 
     //rendering
+
+    this.bloomParams = {
+      exposure: 1,
+      bloomStrength: 0.2,
+      bloomThreshold: 0.1,
+      bloomRadius: 0.0,
+      scene: "Scene with Glow"
+    };
 
 
     this.renderPass = new RenderPass( this.scene, this.camera );
@@ -165,6 +188,14 @@ class CanvasComponent extends Component {
     this.composer1 = new EffectComposer( this.renderer );
     this.composer1.addPass( this.renderPass );
     this.composer1.addPass( this.fxaaPass );
+
+    this.bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+    this.bloomPass.threshold = this.bloomParams.bloomThreshold;
+    this.bloomPass.strength = this.bloomParams.bloomStrength;
+    this.bloomPass.radius = this.bloomParams.bloomRadius;
+
+    this.composer1.addPass( this.renderPass );
+    this.composer1.addPass( this.bloomPass );
 
     //rendering
 
@@ -187,19 +218,25 @@ class CanvasComponent extends Component {
     this.water = new Water(
       this.waterGeometry,
       {
-        textureWidth: 512,
-        textureHeight: 512,
+        textureWidth: 1024,
+        textureHeight: 1024,
         waterNormals: new THREE.TextureLoader().load( waternormals, function ( texture ) {
           texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
         } ),
-        alpha: 1.0,
+        alpha: 0.9,
         sunDirection: this.light.position.clone().normalize(),
         sunColor: 0xffffff,
         waterColor: 0x001e0f,
-        distortionScale: 1.7,
+        distortionScale: 0.4,
         fog: this.scene.fog !== undefined
       }
     );
+
+    this.waterUniforms = this.water.material.uniforms;
+
+    this.water.material.uniforms.size.value = 4;
+
+    console.log(this.waterUniforms);
 
 
 
@@ -227,6 +264,8 @@ class CanvasComponent extends Component {
 
     this.sky = new Sky();
     this.uniforms = this.sky.material.uniforms;
+    console.log(this.sky.material.uniforms)
+    this.sky.material.fog = true;
 
     this.uniforms[ 'turbidity' ].value = 10;
     this.uniforms[ 'rayleigh' ].value = 4;
@@ -239,11 +278,6 @@ class CanvasComponent extends Component {
       inclination: 0.51,
       azimuth: 0.205
     };
-
-    this.cubeCamera = new THREE.CubeCamera( 0.1, 1, 512 );
-    this.cubeCamera.renderTarget.texture.generateMipmaps = true;
-    this.cubeCamera.renderTarget.texture.minFilter = THREE.LinearMipmapLinearFilter;
-    this.scene.background = this.cubeCamera.renderTarget;
 
 
     this.updateSun();
@@ -328,7 +362,7 @@ class CanvasComponent extends Component {
     } else {
 
     }
-
+    this.cubeCameraTexture.update(this.renderer, this.scene);
     this.camera.position.y = this.player.height;
     this.renderer.render(this.scene, this.camera);
     this.composer1.render();
@@ -404,6 +438,10 @@ class CanvasComponent extends Component {
     this.camera.aspect = this.mount.clientWidth / this.mount.clientHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize( this.mount.clientWidth, this.mount.clientHeight );
+    this.composer1.setSize( this.mount.offsetWidth, this.mount.offsetHeight );
+    this.pixelRatio = this.renderer.getPixelRatio();
+    this.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.mount.offsetWidth * this.pixelRatio );
+    this.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.mount.offsetHeight * this.pixelRatio );
   }
 
   render = () => {
