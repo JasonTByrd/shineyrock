@@ -99,7 +99,7 @@ class CanvasComponent extends Component {
     this.cubeCamera.renderTarget.texture.minFilter = THREE.LinearMipmapLinearFilter;
     this.scene.background = this.cubeCamera.renderTarget;
 
-    this.scene.fog = new THREE.FogExp2( 0x080305, 0.0400 );
+    this.scene.fog = new THREE.FogExp2( 0x182335, 0.0400 );
 
 
     this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
@@ -133,7 +133,7 @@ class CanvasComponent extends Component {
     });
     this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
     this.textMesh.position.y += 5;
-    this.textMesh.position.x -= 12;
+    this.textMesh.position.x -= 11.5;
     this.textMesh.position.z -= 15;
     this.textMesh.castShadow = true;
     this.scene.add(this.textMesh);
@@ -170,8 +170,8 @@ class CanvasComponent extends Component {
     //rendering
 
     this.bloomParams = {
-      exposure: 1,
-      bloomStrength: 0.2,
+      exposure: 10,
+      bloomStrength: 0.3,
       bloomThreshold: 0.1,
       bloomRadius: 0.0,
       scene: "Scene with Glow"
@@ -267,15 +267,15 @@ class CanvasComponent extends Component {
     console.log(this.sky.material.uniforms)
     this.sky.material.fog = true;
 
-    this.uniforms[ 'turbidity' ].value = 10;
-    this.uniforms[ 'rayleigh' ].value = 4;
-    this.uniforms[ 'luminance' ].value = 1.0;
-    this.uniforms[ 'mieCoefficient' ].value = 0.0;
-    this.uniforms[ 'mieDirectionalG' ].value = 0.0;
+    this.uniforms[ 'turbidity' ].value = 1;
+    this.uniforms[ 'rayleigh' ].value = 2;
+    this.uniforms[ 'luminance' ].value = 0.2;
+    this.uniforms[ 'mieCoefficient' ].value = 0.99;
+    this.uniforms[ 'mieDirectionalG' ].value = 0.99;
 
     this.parameters = {
       distance: 400,
-      inclination: 0.51,
+      inclination: 0.49,
       azimuth: 0.205
     };
 
