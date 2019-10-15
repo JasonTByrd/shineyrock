@@ -10,10 +10,12 @@ import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import waternormals from '../assets/textures/water/waternormals.jpg';
 import droidSans from '../assets/fonts/droid/droid_sans_bold.typeface.json'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+//import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { SSAARenderPass } from 'three/examples/jsm/postprocessing/SSAARenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+//import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
 
 
 class CanvasComponent extends Component {
@@ -48,6 +50,7 @@ class CanvasComponent extends Component {
   uniforms;
   parameters;
   cubeCamera;
+  backgroundOrb;
 
   //fontLoader
   fontLoader;
@@ -56,11 +59,25 @@ class CanvasComponent extends Component {
   selectedFont;
   textMaterial;
   threeFont;
+  textMesh02;
+  textMaterial02;
+  textGeometry;
+  textContainerLogoGeo;
+  textContainerLogoMat;
+  textContainerLogo;
 
   //Lights
   pointLight01;
   pointLightOrb01;
   pointLightGroup01;
+  pointLight02;
+  pointLightOrb02;
+  pointLightGroup02;
+  pointLight03;
+  pointLightOrb03;
+  pointLightGroup03;
+
+  pointLightTextGlow;
 
   //rendering
   renderPass;
@@ -70,8 +87,11 @@ class CanvasComponent extends Component {
   copyPass;
   composer2;
   bloomPass;
+  bloomPass02;
   bloomComposer;
   bloomParams;
+  bloomParams02;
+  ssaaRenderPass;
 
   //reflection
   cubeCameraTexture;
@@ -93,29 +113,59 @@ class CanvasComponent extends Component {
     this.player = { height:1.5, speed:0.08, turnSpeed:Math.PI*0.02 }
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(55, 1280/720, 1, 20000);
-    this.cubeCameraTexture = new THREE.CubeCamera( 1, 10000, 128 );
+
     this.cubeCamera = new THREE.CubeCamera( 0.1, 1, 512 );
     this.cubeCamera.renderTarget.texture.generateMipmaps = true;
     this.cubeCamera.renderTarget.texture.minFilter = THREE.LinearMipmapLinearFilter;
     this.scene.background = this.cubeCamera.renderTarget;
 
-    this.scene.fog = new THREE.FogExp2( 0x182335, 0.0400 );
+    this.scene.fog = new THREE.FogExp2( 0x000000, 0.0200 );
 
 
     this.light = new THREE.DirectionalLight( 0xffffff, 0.5 );
     this.scene.add( this.light );
 
-    this.pointLight01 = new THREE.PointLight(0xffffff, 0.55);
+    this.pointLight01 = new THREE.PointLight(0xffffff, 1.55);
     this.pointLightOrb01 = new THREE.Mesh(
-      new THREE.SphereGeometry(0.05,0.05,0.05),
+      new THREE.SphereGeometry(0.05, 25, 25),
       new THREE.MeshBasicMaterial({color:0xffffff, wireframe:this.useWireframe})
     );
     this.pointLightGroup01 = new THREE.Group();
-    //this.pointLightGroup01.add(this.pointLightOrb01);
+    this.pointLightGroup01.add(this.pointLightOrb01);
     this.pointLightGroup01.add(this.pointLight01);
-    this.camera.add(this.pointLightGroup01);
+    //this.camera.add(this.pointLightGroup01);
     this.pointLightGroup01.position.set(0,0,0);
-    this.scene.add(this.camera)
+    //this.scene.add(this.camera)
+
+    //Lights
+
+
+
+
+    this.pointLight02 = new THREE.PointLight(0xffffff, 0.55);
+    this.pointLightOrb02 = new THREE.Mesh(
+      new THREE.SphereGeometry(0.55, 25, 25),
+      new THREE.MeshBasicMaterial({color:0xffffff, wireframe:this.useWireframe, fog: false})
+    );
+    this.pointLightGroup02 = new THREE.Group();
+    this.pointLightGroup02.add(this.pointLightOrb02);
+    this.pointLightGroup02.add(this.pointLight02);
+    this.pointLightGroup02.position.set(7, 1, -5);
+    this.scene.add(this.pointLightGroup02)
+
+
+    this.pointLight03 = new THREE.PointLight(0xffffff, 0.55);
+    this.pointLightOrb03 = new THREE.Mesh(
+      new THREE.SphereGeometry(0.55, 25, 25),
+      new THREE.MeshBasicMaterial({color:0xffffff, wireframe:this.useWireframe, fog: false})
+    );
+    this.pointLightGroup03 = new THREE.Group();
+    this.pointLightGroup03.add(this.pointLightOrb03);
+    this.pointLightGroup03.add(this.pointLight03);
+    this.pointLightGroup03.position.set(-7, 1, -5);
+    this.scene.add(this.pointLightGroup03)
+
+    //Lights
 
     //water
 
@@ -124,45 +174,66 @@ class CanvasComponent extends Component {
     //water
 
     //fontLoader
+    this.textContainerLogoGeo = new THREE.BoxGeometry(20, 3, 1);
+    this.textContainerLogoMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.01});
+    this.textContainerLogo = new THREE.Mesh(this.textContainerLogoGeo, this.textContainerLogoMat);
+    this.textContainerLogo.position.set(0, 5.5, -15);
+    this.scene.add(this.textContainerLogo);
+
     this.threeFont = new THREE.Font(droidSans);
-    this.textMaterial = new THREE.MeshLambertMaterial({color: 0xff4444});
-    this.textGeometry = new THREE.TextGeometry("Shineyrock.org", {
+    this.textMaterial = new THREE.MeshPhongMaterial({color: 0xBBBBBB});
+    this.textGeometry = new THREE.TextGeometry("ShineyRock.org", {
         font: this.threeFont,
         size: 2,
-        height: 0.2
+        height: 0.05
     });
     this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
     this.textMesh.position.y += 5;
-    this.textMesh.position.x -= 11.5;
+    this.textMesh.position.x -= 10.25;
     this.textMesh.position.z -= 15;
     this.textMesh.castShadow = true;
     this.scene.add(this.textMesh);
 
-    console.log(this.fontLoader, this.textGeometry, this.selectedFont);
+    this.textMaterial02 = new THREE.MeshBasicMaterial({color: 0xffffff});
+    this.textGeometry02 = new THREE.TextGeometry("ShineyRock.org", {
+        font: this.threeFont,
+        size: 2.01,
+        height: 0.01
+    });
+    this.textMesh02 = new THREE.Mesh(this.textGeometry02, this.textMaterial02);
+    this.textMesh02.position.y += 4.95;
+    this.textMesh02.position.x -= 10.30;
+    this.textMesh02.position.z -= 14.98;
+    this.textMesh02.castShadow = true;
+    this.scene.add(this.textMesh02);
 
     //fontLoader
     
-    this.mesh = new THREE.Mesh(
-      new THREE.OctahedronGeometry(0.5, 2),
-      new THREE.MeshPhongMaterial({color:0xffffff, wireframe:this.useWireframe, side: THREE.DoubleSide, flatShading: true, roughness: 0.0, envMap: this.cubeCamera.renderTarget.texture})
-    );
-    this.mesh.position.y += 2;
-    this.mesh.castShadow = true;
-    this.scene.add(this.mesh);
-    
     this.meshFloor = new THREE.Mesh(
-      new THREE.PlaneGeometry(10,10, 10,10),
-      new THREE.MeshBasicMaterial({color:0xffffff, wireframe:this.useWireframe})
+      new THREE.PlaneGeometry(100,100, 100,100),
+      new THREE.MeshPhongMaterial({color:0xffffff, wireframe: false})
     );
     this.meshFloor.rotation.x -= Math.PI / 2; // Rotate the floor 90 degrees
-    this.meshFloor.position.y += 5;
+    this.meshFloor.position.y += -1;
     this.scene.add(this.meshFloor);
+
+    this.backgroundOrb = new THREE.Mesh(
+      new THREE.SphereGeometry(50, 25, 15),
+      new THREE.MeshBasicMaterial({color:0xffffff, wireframe: true})
+    );
+
+    this.scene.add(this.backgroundOrb);
     
-    this.camera.position.set(-1, this.player.height, 5);
+    if(window.innerWidth > 800) {
+      this.camera.position.set(0, this.player.height, 5);
+    }
+    else {
+      this.camera.position.set(0, this.player.height, 25);
+    }
     //this.camera.lookAt(new THREE.Vector3(0,this.player.height,0));
     
     this.renderer = new THREE.WebGLRenderer();
-    this.renderer.shadowMapEnabled = true;
+    this.renderer.shadowMap.enabled = true;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.mount.appendChild(this.renderer.domElement);
 
@@ -170,7 +241,15 @@ class CanvasComponent extends Component {
     //rendering
 
     this.bloomParams = {
-      exposure: 10,
+      exposure: 2,
+      bloomStrength: 2,
+      bloomThreshold: 0.8,
+      bloomRadius: 0.000000,
+      scene: "Scene with Glow"
+    };
+
+    this.bloomParams02 = {
+      exposure: 0.2,
       bloomStrength: 0.3,
       bloomThreshold: 0.1,
       bloomRadius: 0.0,
@@ -178,24 +257,34 @@ class CanvasComponent extends Component {
     };
 
 
-    this.renderPass = new RenderPass( this.scene, this.camera );
-    this.fxaaPass = new ShaderPass( FXAAShader );
-    this.pixelRatio = this.renderer.getPixelRatio();
+    this.composer1 = new EffectComposer( this.renderer )
+    //this.fxaaPass = new ShaderPass( FXAAShader );
+    //this.pixelRatio = this.renderer.getPixelRatio();
 
-    this.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.mount.offsetWidth * this.pixelRatio );
-    this.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.mount.offsetHeight * this.pixelRatio );
+    this.ssaaRenderPass = new SSAARenderPass( this.scene, this.camera );
+    this.ssaaRenderPass.unbiased = true;
+    this.composer1.addPass( this.ssaaRenderPass );
 
-    this.composer1 = new EffectComposer( this.renderer );
-    this.composer1.addPass( this.renderPass );
-    this.composer1.addPass( this.fxaaPass );
+    //this.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.mount.offsetWidth * this.pixelRatio );
+    //this.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.mount.offsetHeight * this.pixelRatio );
 
+    this.copyPass = new ShaderPass( CopyShader );
+    this.composer1.addPass( this.copyPass );
+
+    // this.renderPass = new RenderPass( this.scene, this.camera );
     this.bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
     this.bloomPass.threshold = this.bloomParams.bloomThreshold;
     this.bloomPass.strength = this.bloomParams.bloomStrength;
     this.bloomPass.radius = this.bloomParams.bloomRadius;
 
-    this.composer1.addPass( this.renderPass );
+    this.bloomPass02 = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+    this.bloomPass02.threshold = this.bloomParams02.bloomThreshold;
+    this.bloomPass02.strength = this.bloomParams02.bloomStrength;
+    this.bloomPass02.radius = this.bloomParams02.bloomRadius;
+
+    //this.composer1.addPass( this.renderPass );
     this.composer1.addPass( this.bloomPass );
+    //this.composer1.addPass( this.bloomPass02 );
 
     //rendering
 
@@ -225,8 +314,8 @@ class CanvasComponent extends Component {
         } ),
         alpha: 0.9,
         sunDirection: this.light.position.clone().normalize(),
-        sunColor: 0xffffff,
-        waterColor: 0x001e0f,
+        sunColor: 0x000000,
+        waterColor: 0x000000,
         distortionScale: 0.4,
         fog: this.scene.fog !== undefined
       }
@@ -236,8 +325,7 @@ class CanvasComponent extends Component {
 
     this.water.material.uniforms.size.value = 4;
 
-    console.log(this.waterUniforms);
-
+    console.log(this.water);
 
 
     this.water.rotation.x = - Math.PI / 2;
@@ -264,7 +352,6 @@ class CanvasComponent extends Component {
 
     this.sky = new Sky();
     this.uniforms = this.sky.material.uniforms;
-    console.log(this.sky.material.uniforms)
     this.sky.material.fog = true;
 
     this.uniforms[ 'turbidity' ].value = 1;
@@ -280,7 +367,7 @@ class CanvasComponent extends Component {
     };
 
 
-    this.updateSun();
+    //this.updateSun();
 
 
     //skybox
@@ -288,7 +375,15 @@ class CanvasComponent extends Component {
 
 
 
-
+    this.cubeCameraTexture = new THREE.CubeCamera( 1, 10000, 128 );
+    this.mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.5, 25, 25),
+      new THREE.MeshPhongMaterial({color:0xffffff, wireframe:this.useWireframe, side: THREE.DoubleSide, flatShading: false, envMap: this.cubeCameraTexture.renderTarget.texture})
+    );
+    this.cubeCameraTexture.position.copy(this.mesh.position);
+    this.mesh.position.y += 2;
+    this.mesh.castShadow = true;
+    //this.scene.add(this.mesh);
 
 
 
@@ -321,27 +416,23 @@ class CanvasComponent extends Component {
 
     this.water.material.uniforms[ 'time' ].value += 0.2 / 60.0;
 
-    this.mesh.position.y = Math.sin( time ) * 1 + 0.5;
-		this.mesh.rotation.x = time * 0.5;
-		this.mesh.rotation.z = time * 0.51;
+    this.pointLightGroup02.position.y = Math.sin( time ) * 0.1 + 1;
+    this.pointLightGroup03.position.y = Math.sin( time ) * -0.1 + 1;
 	
-    // this.mesh.rotation.x += 0.01;
-    // this.mesh.rotation.y += 0.02;
+    // this.backgroundOrb.rotation.x += 0.0001;
+    this.backgroundOrb.rotation.y += 0.0002;
+    // this.backgroundOrb.rotation.z += 0.0002;
 
     if (this.pointerLockedStatus) {
       let picked = this.pickHelper.pickCenter(this.scene, this.camera, this.mount);
-      if (picked === this.mesh && picked !== false) {
-        this.mesh.material.wireframe = true;
-      }
-      else {
-        this.mesh.material.wireframe = false;
-      }
 
-      if (picked === this.meshFloor && picked !== false) {
-        this.meshFloor.material.wireframe = true;
+      if (picked === this.textContainerLogo && picked !== false) {
+        this.textMesh.hovered = true;
+        this.mount.style.cursor = "pointer";
       }
       else {
-        this.meshFloor.material.wireframe = false;
+        this.textMesh.hovered = false;
+        this.mount.style.cursor = "auto";
       }
     
       // Keyboard movement inputs
@@ -362,11 +453,33 @@ class CanvasComponent extends Component {
     } else {
 
     }
+
+    if(this.textMesh.hovered === true && (this.textMaterial.color.r < 1 || this.textMaterial.color.g > 0.25 || this.textMaterial.color.b > 0.25)) {
+      this.textMaterial.color.r += 0.025
+      this.textMaterial.color.g -= 0.025
+      this.textMaterial.color.b -= 0.025
+    } else if(this.textMesh.hovered === false && (this.textMaterial.color.r > 0.73 || this.textMaterial.color.g < 0.73 || this.textMaterial.color.b < 0.73)) {
+      this.textMaterial.color.r -= 0.025
+      this.textMaterial.color.g += 0.025
+      this.textMaterial.color.b += 0.025
+    }
+
+    this.mesh.visible = false;
+    this.cubeCameraTexture.position.copy(this.mesh.position);
     this.cubeCameraTexture.update(this.renderer, this.scene);
+    this.mesh.visible = true;
+
+    
     this.camera.position.y = this.player.height;
-    this.renderer.render(this.scene, this.camera);
+
     this.composer1.render();
   }
+
+  generateRandomNumber(min, max) {
+      let highlightedNumber = Math.random() * (max - min) + min;
+
+      return highlightedNumber;
+  };
 
   canvasClick = () => {
     this.controls.lock(false);
@@ -374,47 +487,43 @@ class CanvasComponent extends Component {
 
   clickOnObject = (event) => {
     //console.log('test', event);
-    if (this.pointerLockedStatus) {
-      let picked = this.pickHelper.pickCenter(this.scene, this.camera, this.mount);
-      if (picked) {
-        if (picked.material.wireframe === true) {
-          picked.material.wireframe = false;
-        }
-        else {
-          picked.material.wireframe = true;
-        }
-      }
-      console.log(this.pickHelper.pickCenter(this.scene, this.camera, this.mount));
-    } else {
-      let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
-      if (picked) {
-        if (picked.material.wireframe === true) {
-          picked.material.wireframe = false;
-        }
-        else {
-          picked.material.wireframe = true;
-        }
-      }
-      console.log(this.pickHelper.pick(event, this.scene, this.camera, this.mount));
-    }
+    // if (this.pointerLockedStatus) {
+    //   let picked = this.pickHelper.pickCenter(this.scene, this.camera, this.mount);
+    //   if (picked) {
+    //     if (picked.material.wireframe === true) {
+    //       picked.material.wireframe = false;
+    //     }
+    //     else {
+    //       picked.material.wireframe = true;
+    //     }
+    //   }
+    //   console.log(this.pickHelper.pickCenter(this.scene, this.camera, this.mount));
+    // } else {
+    //   let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
+    //   if (picked) {
+    //     if (picked.material.wireframe === true) {
+    //       picked.material.wireframe = false;
+    //     }
+    //     else {
+    //       picked.material.wireframe = true;
+    //     }
+    //   }
+    //   console.log(this.pickHelper.pick(event, this.scene, this.camera, this.mount));
+    // }
   }
 
   mouseMoveSelection = (event) => {
     if (this.pointerLockedStatus) {
     } else {
       let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
-      if (picked === this.mesh && picked !== false) {
-        this.mesh.material.wireframe = true;
-      }
-      else {
-        this.mesh.material.wireframe = false;
-      }
 
-      if (picked === this.meshFloor && picked !== false) {
-        this.meshFloor.material.wireframe = true;
+      if (picked === this.textContainerLogo && picked !== false) {
+        this.textMesh.hovered = true;
+        this.mount.style.cursor = "pointer";
       }
       else {
-        this.meshFloor.material.wireframe = false;
+        this.textMesh.hovered = false;
+        this.mount.style.cursor = "auto";
       }
     }
   }
@@ -437,11 +546,11 @@ class CanvasComponent extends Component {
     //console.log(this.mount.clientWidth, this.mount.clientHeight);
     this.camera.aspect = this.mount.clientWidth / this.mount.clientHeight;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize( this.mount.clientWidth, this.mount.clientHeight );
-    this.composer1.setSize( this.mount.offsetWidth, this.mount.offsetHeight );
-    this.pixelRatio = this.renderer.getPixelRatio();
-    this.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.mount.offsetWidth * this.pixelRatio );
-    this.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.mount.offsetHeight * this.pixelRatio );
+    this.renderer.setSize(this.mount.clientWidth, this.mount.clientHeight);
+    this.composer1.setSize(this.mount.clientWidth, this.mount.clientHeight);
+    //this.pixelRatio = this.renderer.getPixelRatio();
+    //this.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.mount.offsetWidth * this.pixelRatio );
+    //this.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.mount.offsetHeight * this.pixelRatio );
   }
 
   render = () => {
