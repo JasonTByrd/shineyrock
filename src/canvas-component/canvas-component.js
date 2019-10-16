@@ -210,7 +210,7 @@ class CanvasComponent extends Component {
     //fontLoader
     
     this.meshFloor = new THREE.Mesh(
-      new THREE.PlaneGeometry(100,100, 100,100),
+      new THREE.PlaneGeometry(100,100, 1,1),
       new THREE.MeshPhongMaterial({color:0xffffff, wireframe: false})
     );
     this.meshFloor.rotation.x -= Math.PI / 2; // Rotate the floor 90 degrees
@@ -263,6 +263,7 @@ class CanvasComponent extends Component {
 
     this.ssaaRenderPass = new SSAARenderPass( this.scene, this.camera );
     this.ssaaRenderPass.unbiased = true;
+    this.ssaaRenderPass.sampleLevel = 2;
     this.composer1.addPass( this.ssaaRenderPass );
 
     //this.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.mount.offsetWidth * this.pixelRatio );
@@ -277,10 +278,10 @@ class CanvasComponent extends Component {
     this.bloomPass.strength = this.bloomParams.bloomStrength;
     this.bloomPass.radius = this.bloomParams.bloomRadius;
 
-    this.bloomPass02 = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
-    this.bloomPass02.threshold = this.bloomParams02.bloomThreshold;
-    this.bloomPass02.strength = this.bloomParams02.bloomStrength;
-    this.bloomPass02.radius = this.bloomParams02.bloomRadius;
+    // this.bloomPass02 = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+    // this.bloomPass02.threshold = this.bloomParams02.bloomThreshold;
+    // this.bloomPass02.strength = this.bloomParams02.bloomStrength;
+    // this.bloomPass02.radius = this.bloomParams02.bloomRadius;
 
     //this.composer1.addPass( this.renderPass );
     this.composer1.addPass( this.bloomPass );
