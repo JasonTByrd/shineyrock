@@ -169,7 +169,7 @@ class CanvasComponent extends Component {
 
     //water
 
-    this.waterGeometry = new THREE.PlaneBufferGeometry( 10000, 10000 );
+    this.waterGeometry = new THREE.PlaneBufferGeometry( 1000, 1000 );
 
     //water
 
@@ -248,13 +248,13 @@ class CanvasComponent extends Component {
       scene: "Scene with Glow"
     };
 
-    this.bloomParams02 = {
-      exposure: 0.2,
-      bloomStrength: 0.3,
-      bloomThreshold: 0.1,
-      bloomRadius: 0.0,
-      scene: "Scene with Glow"
-    };
+    // this.bloomParams02 = {
+    //   exposure: 0.2,
+    //   bloomStrength: 0.3,
+    //   bloomThreshold: 0.1,
+    //   bloomRadius: 0.0,
+    //   scene: "Scene with Glow"
+    // };
 
 
     this.composer1 = new EffectComposer( this.renderer )
