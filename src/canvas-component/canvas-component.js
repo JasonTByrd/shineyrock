@@ -62,9 +62,20 @@ class CanvasComponent extends Component {
   textMesh02;
   textMaterial02;
   textGeometry;
+  textGeometry02;
   textContainerLogoGeo;
   textContainerLogoMat;
   textContainerLogo;
+  textMesh03;
+  textMesh04;
+  textMaterial03;
+  textMaterial04;
+  textGeometry03;
+  textGeometry04;
+
+  textContainerAboutGeo;
+  textContainerAboutMat;
+  textContainerAbout;
 
   //Lights
   pointLight01;
@@ -207,6 +218,48 @@ class CanvasComponent extends Component {
     this.textMesh02.castShadow = true;
     this.scene.add(this.textMesh02);
 
+
+
+
+
+
+    //about
+
+    this.textContainerAboutGeo = new THREE.BoxGeometry(20, 3, 1);
+    this.textContainerAboutMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.01});
+    this.textContainerAbout = new THREE.Mesh(this.textContainerAboutGeo, this.textContainerAboutMat);
+    this.textContainerAbout.position.set(0, 5.5, -15);
+    this.scene.add(this.textContainerLogo);
+
+    this.threeFont = new THREE.Font(droidSans);
+    this.textMaterial03 = new THREE.MeshPhongMaterial({color: 0xBBBBBB});
+    this.textGeometry03 = new THREE.TextGeometry("About", {
+        font: this.threeFont,
+        size: 2,
+        height: 0.05
+    });
+    this.textMesh03 = new THREE.Mesh(this.textGeometry03, this.textMaterial03);
+    this.textMesh03.position.y += 0.5;
+    this.textMesh03.position.x -= 12.25;
+    this.textMesh03.position.z -= 15;
+    this.textMesh03.castShadow = true;
+    this.scene.add(this.textMesh03);
+
+    this.textMaterial04 = new THREE.MeshBasicMaterial({color: 0xffffff});
+    this.textGeometry04 = new THREE.TextGeometry("About", {
+        font: this.threeFont,
+        size: 2.01,
+        height: 0.01
+    });
+    this.textMesh04 = new THREE.Mesh(this.textGeometry04, this.textMaterial04);
+    this.textMesh04.position.y += 0.45;
+    this.textMesh04.position.x -= 12.30;
+    this.textMesh04.position.z -= 14.98;
+    this.textMesh04.castShadow = true;
+    this.scene.add(this.textMesh04);
+
+    //about
+
     //fontLoader
     
     this.meshFloor = new THREE.Mesh(
@@ -308,8 +361,8 @@ class CanvasComponent extends Component {
     this.water = new Water(
       this.waterGeometry,
       {
-        textureWidth: 1024,
-        textureHeight: 1024,
+        textureWidth: 512,
+        textureHeight: 512,
         waterNormals: new THREE.TextureLoader().load( waternormals, function ( texture ) {
           texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
         } ),
