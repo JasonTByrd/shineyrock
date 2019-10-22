@@ -9,6 +9,7 @@ import { Water } from 'three/examples/jsm/objects/Water.js';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import waternormals from '../assets/textures/water/waternormals.jpg';
 import droidSans from '../assets/fonts/droid/droid_sans_bold.typeface.json'
+import helvetica from '../assets/fonts/helvetiker_regular.typeface.json'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 //import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
@@ -66,16 +67,39 @@ class CanvasComponent extends Component {
   textContainerLogoGeo;
   textContainerLogoMat;
   textContainerLogo;
+
+
   textMesh03;
   textMesh04;
   textMaterial03;
   textMaterial04;
   textGeometry03;
   textGeometry04;
-
   textContainerAboutGeo;
   textContainerAboutMat;
   textContainerAbout;
+
+
+  textMesh05;
+  textMesh06;
+  textMaterial05;
+  textMaterial06;
+  textGeometry05;
+  textGeometry06;
+  textContainerPortfolioGeo;
+  textContainerPortfolioMat;
+  textContainerPortfolio;
+
+
+  textMesh07;
+  textMesh08;
+  textMaterial07;
+  textMaterial08;
+  textGeometry07;
+  textGeometry08;
+  textContainerContactGeo;
+  textContainerContactMat;
+  textContainerContact;
 
   //Lights
   pointLight01;
@@ -155,25 +179,27 @@ class CanvasComponent extends Component {
 
     this.pointLight02 = new THREE.PointLight(0xffffff, 0.55);
     this.pointLightOrb02 = new THREE.Mesh(
-      new THREE.SphereGeometry(0.55, 25, 25),
+      new THREE.SphereGeometry(0.25, 10, 10),
       new THREE.MeshBasicMaterial({color:0xffffff, wireframe:this.useWireframe, fog: false})
     );
     this.pointLightGroup02 = new THREE.Group();
     this.pointLightGroup02.add(this.pointLightOrb02);
     this.pointLightGroup02.add(this.pointLight02);
-    this.pointLightGroup02.position.set(7, 1, -5);
+    this.pointLightOrb02.position.set(1, 0, -7);
+    this.pointLightGroup02.position.set(5.9, 2, -9);
     this.scene.add(this.pointLightGroup02)
 
 
     this.pointLight03 = new THREE.PointLight(0xffffff, 0.55);
     this.pointLightOrb03 = new THREE.Mesh(
-      new THREE.SphereGeometry(0.55, 25, 25),
+      new THREE.SphereGeometry(0.25, 10, 10),
       new THREE.MeshBasicMaterial({color:0xffffff, wireframe:this.useWireframe, fog: false})
     );
     this.pointLightGroup03 = new THREE.Group();
     this.pointLightGroup03.add(this.pointLightOrb03);
     this.pointLightGroup03.add(this.pointLight03);
-    this.pointLightGroup03.position.set(-7, 1, -5);
+    this.pointLightOrb03.position.set(-1, 0, -7);
+    this.pointLightGroup03.position.set(-5.9, 2, -9);
     this.scene.add(this.pointLightGroup03)
 
     //Lights
@@ -186,34 +212,36 @@ class CanvasComponent extends Component {
 
     //fontLoader
     this.textContainerLogoGeo = new THREE.BoxGeometry(20, 3, 1);
-    this.textContainerLogoMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.01});
+    this.textContainerLogoMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.0});
     this.textContainerLogo = new THREE.Mesh(this.textContainerLogoGeo, this.textContainerLogoMat);
     this.textContainerLogo.position.set(0, 5.5, -15);
     this.scene.add(this.textContainerLogo);
 
-    this.threeFont = new THREE.Font(droidSans);
+    this.threeFont = new THREE.Font(helvetica);
     this.textMaterial = new THREE.MeshPhongMaterial({color: 0xBBBBBB});
-    this.textGeometry = new THREE.TextGeometry("ShineyRock.org", {
+    this.textGeometry = new THREE.TextGeometry("SHINEYROCK", {
         font: this.threeFont,
         size: 2,
-        height: 0.05
+        height: 0.05,
+        italic: true
     });
     this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
     this.textMesh.position.y += 5;
-    this.textMesh.position.x -= 10.25;
+    this.textMesh.position.x -= 8.45;
     this.textMesh.position.z -= 15;
     this.textMesh.castShadow = true;
     this.scene.add(this.textMesh);
 
     this.textMaterial02 = new THREE.MeshBasicMaterial({color: 0xffffff});
-    this.textGeometry02 = new THREE.TextGeometry("ShineyRock.org", {
+    this.textGeometry02 = new THREE.TextGeometry("SHINEYROCK", {
         font: this.threeFont,
         size: 2.01,
-        height: 0.01
+        height: 0.01,
+        italic: true
     });
     this.textMesh02 = new THREE.Mesh(this.textGeometry02, this.textMaterial02);
     this.textMesh02.position.y += 4.95;
-    this.textMesh02.position.x -= 10.30;
+    this.textMesh02.position.x -= 8.50;
     this.textMesh02.position.z -= 14.98;
     this.textMesh02.castShadow = true;
     this.scene.add(this.textMesh02);
@@ -225,40 +253,120 @@ class CanvasComponent extends Component {
 
     //about
 
-    this.textContainerAboutGeo = new THREE.BoxGeometry(20, 3, 1);
-    this.textContainerAboutMat = new THREE.MeshBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.01});
+    this.textContainerAboutGeo = new THREE.BoxGeometry(8, 3, 1);
+    this.textContainerAboutMat = new THREE.MeshBasicMaterial({wireframe: true, color: 0x777777, transparent: true, opacity: 0.0});
     this.textContainerAbout = new THREE.Mesh(this.textContainerAboutGeo, this.textContainerAboutMat);
-    this.textContainerAbout.position.set(0, 5.5, -15);
-    this.scene.add(this.textContainerLogo);
+    this.textContainerAbout.position.set(-12, 2, -16);
+    this.textContainerAbout.rotation.y = 0.5;
+    this.scene.add(this.textContainerAbout);
 
-    this.threeFont = new THREE.Font(droidSans);
+
     this.textMaterial03 = new THREE.MeshPhongMaterial({color: 0xBBBBBB});
-    this.textGeometry03 = new THREE.TextGeometry("About", {
+    this.textGeometry03 = new THREE.TextGeometry("ABOUT", {
         font: this.threeFont,
-        size: 2,
+        size: 1.5,
         height: 0.05
     });
     this.textMesh03 = new THREE.Mesh(this.textGeometry03, this.textMaterial03);
     this.textMesh03.position.y += 0.5;
-    this.textMesh03.position.x -= 12.25;
+    this.textMesh03.position.x -= 15.45;
     this.textMesh03.position.z -= 15;
     this.textMesh03.castShadow = true;
+    this.textMesh03.rotation.y = 0.5;
     this.scene.add(this.textMesh03);
 
     this.textMaterial04 = new THREE.MeshBasicMaterial({color: 0xffffff});
-    this.textGeometry04 = new THREE.TextGeometry("About", {
+    this.textGeometry04 = new THREE.TextGeometry("ABOUT", {
         font: this.threeFont,
-        size: 2.01,
+        size: 1.51,
         height: 0.01
     });
     this.textMesh04 = new THREE.Mesh(this.textGeometry04, this.textMaterial04);
     this.textMesh04.position.y += 0.45;
-    this.textMesh04.position.x -= 12.30;
+    this.textMesh04.position.x -= 15.50;
     this.textMesh04.position.z -= 14.98;
     this.textMesh04.castShadow = true;
+    this.textMesh04.rotation.y = 0.5;
     this.scene.add(this.textMesh04);
 
     //about
+
+    //portfolio
+
+    this.textContainerPortfolioGeo = new THREE.BoxGeometry(12, 3, 1);
+    this.textContainerPortfolioMat = new THREE.MeshBasicMaterial({wireframe: true, color: 0x777777, transparent: true, opacity: 0.0});
+    this.textContainerPortfolio = new THREE.Mesh(this.textContainerPortfolioGeo, this.textContainerPortfolioMat);
+    this.textContainerPortfolio.position.set(0, 2, -18);
+    this.scene.add(this.textContainerPortfolio);
+
+
+    this.textMaterial05 = new THREE.MeshPhongMaterial({color: 0xBBBBBB});
+    this.textGeometry05 = new THREE.TextGeometry("PORTFOLIO", {
+        font: this.threeFont,
+        size: 1.5,
+        height: 0.05
+    });
+    this.textMesh05 = new THREE.Mesh(this.textGeometry05, this.textMaterial05);
+    this.textMesh05.position.y += 0.5;
+    this.textMesh05.position.x -= 5.45;
+    this.textMesh05.position.z -= 18;
+    this.textMesh05.castShadow = true;
+    this.scene.add(this.textMesh05);
+
+    this.textMaterial06 = new THREE.MeshBasicMaterial({color: 0xffffff});
+    this.textGeometry06 = new THREE.TextGeometry("PORTFOLIO", {
+        font: this.threeFont,
+        size: 1.51,
+        height: 0.01
+    });
+    this.textMesh06 = new THREE.Mesh(this.textGeometry06, this.textMaterial06);
+    this.textMesh06.position.y += 0.45;
+    this.textMesh06.position.x -= 5.50;
+    this.textMesh06.position.z -= 17.98;
+    this.textMesh06.castShadow = true;
+    this.scene.add(this.textMesh06);
+
+    //portfolio
+
+    //contact
+
+    this.textContainerContactGeo = new THREE.BoxGeometry(10, 3, 1);
+    this.textContainerContactMat = new THREE.MeshBasicMaterial({wireframe: true, color: 0x777777, transparent: true, opacity: 0.0});
+    this.textContainerContact = new THREE.Mesh(this.textContainerContactGeo, this.textContainerContactMat);
+    this.textContainerContact.position.set(14, 2, -16.5);
+    this.textContainerContact.rotation.y = -0.5;
+    this.scene.add(this.textContainerContact);
+
+
+    this.textMaterial07 = new THREE.MeshPhongMaterial({color: 0xBBBBBB});
+    this.textGeometry07 = new THREE.TextGeometry("CONTACT", {
+        font: this.threeFont,
+        size: 1.5,
+        height: 0.05
+    });
+    this.textMesh07 = new THREE.Mesh(this.textGeometry07, this.textMaterial07);
+    this.textMesh07.position.y += 0.5;
+    this.textMesh07.position.x -= -9.40;
+    this.textMesh07.position.z -= 18.98;
+    this.textMesh07.castShadow = true;
+    this.textMesh07.rotation.y = -0.5;
+    this.scene.add(this.textMesh07);
+
+    this.textMaterial08 = new THREE.MeshBasicMaterial({color: 0xffffff});
+    this.textGeometry08 = new THREE.TextGeometry("CONTACT", {
+        font: this.threeFont,
+        size: 1.51,
+        height: 0.01
+    });
+    this.textMesh08 = new THREE.Mesh(this.textGeometry08, this.textMaterial08);
+    this.textMesh08.position.y += 0.45;
+    this.textMesh08.position.x -= -9.35;
+    this.textMesh08.position.z -= 19;
+    this.textMesh08.castShadow = true;
+    this.textMesh08.rotation.y = -0.5;
+    this.scene.add(this.textMesh08);
+
+    //contact
 
     //fontLoader
     
@@ -278,7 +386,7 @@ class CanvasComponent extends Component {
     this.scene.add(this.backgroundOrb);
     
     if(window.innerWidth > 800) {
-      this.camera.position.set(0, this.player.height, 5);
+      this.camera.position.set(0, this.player.height, 10);
     }
     else {
       this.camera.position.set(0, this.player.height, 25);
@@ -470,8 +578,8 @@ class CanvasComponent extends Component {
 
     this.water.material.uniforms[ 'time' ].value += 0.2 / 60.0;
 
-    this.pointLightGroup02.position.y = Math.sin( time ) * 0.1 + 1;
-    this.pointLightGroup03.position.y = Math.sin( time ) * -0.1 + 1;
+    this.pointLightGroup02.position.y = Math.sin( time ) * 0.1 + 1.2;
+    this.pointLightGroup03.position.y = Math.sin( time ) * -0.1 + 1.2;
 	
     // this.backgroundOrb.rotation.x += 0.0001;
     this.backgroundOrb.rotation.y += 0.0002;
@@ -482,10 +590,35 @@ class CanvasComponent extends Component {
 
       if (picked === this.textContainerLogo && picked !== false) {
         this.textMesh.hovered = true;
-        this.mount.style.cursor = "pointer";
       }
       else {
         this.textMesh.hovered = false;
+      }
+
+      if (picked === this.textContainerAbout && picked !== false) {
+        this.textMesh03.hovered = true;
+      }
+      else {
+        this.textMesh03.hovered = false;
+      }
+
+      if (picked === this.textContainerPortfolio && picked !== false) {
+        this.textMesh05.hovered = true;
+      }
+      else {
+        this.textMesh05.hovered = false;
+      }
+
+      if (picked === this.textContainerContact && picked !== false) {
+        this.textMesh07.hovered = true;
+      }
+      else {
+        this.textMesh07.hovered = false;
+      }
+      
+      if (picked) {
+        this.mount.style.cursor = "pointer";
+      } else {
         this.mount.style.cursor = "auto";
       }
     
@@ -509,13 +642,155 @@ class CanvasComponent extends Component {
     }
 
     if(this.textMesh.hovered === true && (this.textMaterial.color.r < 1 || this.textMaterial.color.g > 0.25 || this.textMaterial.color.b > 0.25)) {
+      this.pointLight02.color.r -= 0.00;
+      this.pointLight02.color.g -= 0.025;
+      this.pointLight02.color.b -= 0.025;
+      this.pointLight03.color.r -= 0.00;
+      this.pointLight03.color.g -= 0.025;
+      this.pointLight03.color.b -= 0.025;
+      this.pointLightOrb02.material.color.r -= 0.00;
+      this.pointLightOrb02.material.color.g -= 0.01;
+      this.pointLightOrb02.material.color.b -= 0.01;
+      this.pointLightOrb03.material.color.r -= 0.00;
+      this.pointLightOrb03.material.color.g -= 0.01;
+      this.pointLightOrb03.material.color.b -= 0.01;
+
       this.textMaterial.color.r += 0.025
       this.textMaterial.color.g -= 0.025
       this.textMaterial.color.b -= 0.025
     } else if(this.textMesh.hovered === false && (this.textMaterial.color.r > 0.73 || this.textMaterial.color.g < 0.73 || this.textMaterial.color.b < 0.73)) {
+      this.pointLight02.color.r += 0.00;
+      this.pointLight02.color.g += 0.025;
+      this.pointLight02.color.b += 0.025;
+      this.pointLight03.color.r += 0.00;
+      this.pointLight03.color.g += 0.025;
+      this.pointLight03.color.b += 0.025;
+      this.pointLightOrb02.material.color.r += 0.00;
+      this.pointLightOrb02.material.color.g += 0.01;
+      this.pointLightOrb02.material.color.b += 0.01;
+      this.pointLightOrb03.material.color.r += 0.00;
+      this.pointLightOrb03.material.color.g += 0.01;
+      this.pointLightOrb03.material.color.b += 0.01;
+
       this.textMaterial.color.r -= 0.025
       this.textMaterial.color.g += 0.025
       this.textMaterial.color.b += 0.025
+    }
+
+    if(this.textMesh03.hovered === true && (this.textMaterial03.color.r > 0.35 || this.textMaterial03.color.g > 0.75 || this.textMaterial03.color.b < 1)) {
+      this.pointLight02.color.r -= 0.02;
+      this.pointLight02.color.g -= 0.01;
+      this.pointLight02.color.b -= 0.0;
+      this.pointLight03.color.r -= 0.02;
+      this.pointLight03.color.g -= 0.01;
+      this.pointLight03.color.b -= 0.0;
+      this.pointLightOrb02.material.color.r -= 0.02;
+      this.pointLightOrb02.material.color.g -= 0.005;
+      this.pointLightOrb02.material.color.b -= 0.0;
+      this.pointLightOrb03.material.color.r -= 0.02;
+      this.pointLightOrb03.material.color.g -= 0.005;
+      this.pointLightOrb03.material.color.b -= 0.0;
+
+      this.textMaterial03.color.r -= 0.025
+      this.textMaterial03.color.g -= 0.005
+      this.textMaterial03.color.b += 0.015
+    } else if(this.textMesh03.hovered === false && (this.textMaterial03.color.r < 0.73 || this.textMaterial03.color.g < 0.73 || this.textMaterial03.color.b > 0.73)) {
+      this.pointLight02.color.r += 0.02;
+      this.pointLight02.color.g += 0.01;
+      this.pointLight02.color.b += 0.0;
+      this.pointLight03.color.r += 0.02;
+      this.pointLight03.color.g += 0.01;
+      this.pointLight03.color.b += 0.0;
+      this.pointLightOrb02.material.color.r += 0.02;
+      this.pointLightOrb02.material.color.g += 0.005;
+      this.pointLightOrb02.material.color.b += 0.0;
+      this.pointLightOrb03.material.color.r += 0.02;
+      this.pointLightOrb03.material.color.g += 0.005;
+      this.pointLightOrb03.material.color.b += 0.0;
+
+      this.textMaterial03.color.r += 0.025
+      this.textMaterial03.color.g += 0.005
+      this.textMaterial03.color.b -= 0.015
+    }
+
+    if(this.textMesh05.hovered === true && (this.textMaterial05.color.r > 0.75 || this.textMaterial05.color.g < 0.93 || this.textMaterial05.color.b > 0.65)) {
+
+      this.pointLight02.color.r -= 0.01;
+      this.pointLight02.color.g -= 0.0;
+      this.pointLight02.color.b -= 0.02;
+      this.pointLight03.color.r -= 0.01;
+      this.pointLight03.color.g -= 0.0;
+      this.pointLight03.color.b -= 0.02;
+      this.pointLightOrb02.material.color.r -= 0.01;
+      this.pointLightOrb02.material.color.g -= 0.0;
+      this.pointLightOrb02.material.color.b -= 0.02;
+      this.pointLightOrb03.material.color.r -= 0.01;
+      this.pointLightOrb03.material.color.g -= 0.0;
+      this.pointLightOrb03.material.color.b -= 0.02;
+
+      this.textMaterial05.color.r -= 0.000
+      this.textMaterial05.color.g += 0.015
+      this.textMaterial05.color.b -= 0.015
+
+    } else if(this.textMesh05.hovered === false && (this.textMaterial05.color.r < 0.73 || this.textMaterial05.color.g > 0.73 || this.textMaterial05.color.b < 0.73)) {
+
+      this.pointLight02.color.r += 0.01;
+      this.pointLight02.color.g += 0.00;
+      this.pointLight02.color.b += 0.02;
+      this.pointLight03.color.r += 0.01;
+      this.pointLight03.color.g += 0.00;
+      this.pointLight03.color.b += 0.02;
+      this.pointLightOrb02.material.color.r += 0.01;
+      this.pointLightOrb02.material.color.g += 0.0;
+      this.pointLightOrb02.material.color.b += 0.02;
+      this.pointLightOrb03.material.color.r += 0.01;
+      this.pointLightOrb03.material.color.g += 0.0;
+      this.pointLightOrb03.material.color.b += 0.02;
+
+      this.textMaterial05.color.r += 0.000
+      this.textMaterial05.color.g -= 0.015
+      this.textMaterial05.color.b += 0.015
+
+    }
+
+    if(this.textMesh07.hovered === true && (this.textMaterial07.color.r < 0.9 || this.textMaterial07.color.g > 0.45 || this.textMaterial07.color.b > 0.70)) {
+
+      this.pointLight02.color.r -= 0.0;
+      this.pointLight02.color.g -= 0.02;
+      this.pointLight02.color.b -= 0.01;
+      this.pointLight03.color.r -= 0.0;
+      this.pointLight03.color.g -= 0.02;
+      this.pointLight03.color.b -= 0.01;
+      this.pointLightOrb02.material.color.r -= 0.0;
+      this.pointLightOrb02.material.color.g -= 0.02;
+      this.pointLightOrb02.material.color.b -= 0.01;
+      this.pointLightOrb03.material.color.r -= 0.0;
+      this.pointLightOrb03.material.color.g -= 0.02;
+      this.pointLightOrb03.material.color.b -= 0.01;
+
+      this.textMaterial07.color.r += 0.015
+      this.textMaterial07.color.g -= 0.025
+      this.textMaterial07.color.b -= 0.004
+
+    } else if(this.textMesh07.hovered === false && (this.textMaterial07.color.r > 0.73 || this.textMaterial07.color.g < 0.73 || this.textMaterial07.color.b < 0.73)) {
+
+      this.pointLight02.color.r += 0.0;
+      this.pointLight02.color.g += 0.02;
+      this.pointLight02.color.b += 0.01;
+      this.pointLight03.color.r += 0.0;
+      this.pointLight03.color.g += 0.02;
+      this.pointLight03.color.b += 0.01;
+      this.pointLightOrb02.material.color.r += 0.0;
+      this.pointLightOrb02.material.color.g += 0.02;
+      this.pointLightOrb02.material.color.b += 0.01;
+      this.pointLightOrb03.material.color.r += 0.0;
+      this.pointLightOrb03.material.color.g += 0.02;
+      this.pointLightOrb03.material.color.b += 0.01;
+
+      this.textMaterial07.color.r -= 0.015
+      this.textMaterial07.color.g += 0.025
+      this.textMaterial07.color.b += 0.004
+
     }
 
     this.mesh.visible = false;
@@ -573,10 +848,35 @@ class CanvasComponent extends Component {
 
       if (picked === this.textContainerLogo && picked !== false) {
         this.textMesh.hovered = true;
-        this.mount.style.cursor = "pointer";
       }
       else {
         this.textMesh.hovered = false;
+      }
+
+      if (picked === this.textContainerAbout && picked !== false) {
+        this.textMesh03.hovered = true;
+      }
+      else {
+        this.textMesh03.hovered = false;
+      }
+
+      if (picked === this.textContainerPortfolio && picked !== false) {
+        this.textMesh05.hovered = true;
+      }
+      else {
+        this.textMesh05.hovered = false;
+      }
+
+      if (picked === this.textContainerContact && picked !== false) {
+        this.textMesh07.hovered = true;
+      }
+      else {
+        this.textMesh07.hovered = false;
+      }
+      
+      if (picked && picked !== this.water) {
+        this.mount.style.cursor = "pointer";
+      } else {
         this.mount.style.cursor = "auto";
       }
     }
