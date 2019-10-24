@@ -78,37 +78,96 @@ canvas {
   opacity: 0.7;
 }
 
-@media screen and (max-width: 800px) {
-  canvas {
-    width: 100%;
-    height: 100vh !important;
-    position: relative;
-    border: solid 5px black;
-    border-top-width: 50px;
-    border-bottom-width: 50px;
-  }
+.pickableCanvas .right-arrow {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  bottom: 75px;
+  right: 10%;
+  color: #bbbbbb;
+  opacity: 0.5;
+  z-index: 2;
+}
 
-  .pickableCanvas:before {
-    content: " ";
-    border: solid 0.5px #666666;
-    position: absolute;
-    z-index: 1;
-    top: 50px;
-    bottom: 50px;
-    left: 5px;
-    right: 5px;
-  }
-  
-  .pickableCanvas:after {
-    content: " ";
-    border: solid 0.5px #666666;
-    position: absolute;
-    z-index: 1;
-    top: 1px;
-    bottom: 1px;
-    left: 1px;
-    right: 1px;
-  }
+.pickableCanvas .right-arrow svg {
+  width: 50px;
+  height: 50px;
+}
+
+.pickableCanvas .left-arrow {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  bottom: 75px;
+  left: 10%;
+  color: #bbbbbb;
+  opacity: 0.5;
+  z-index: 2;
+}
+
+.pickableCanvas .left-arrow svg {
+  width: 50px;
+  height: 50px;
+}
+
+.page-container .github-icon {
+  pointer-events: auto;
+  width: 50px;
+  height: 50px;
+  position: fixed;
+  top: 75px;
+  left: 75px;
+  color: #bbbbbb;
+  opacity: 0.5;
+  z-index: 2;
+}
+
+.github-icon svg {
+  width: 50px;
+  height: 50px;
+}
+
+.page-container .linked-icon {
+  pointer-events: auto;
+  width: 50px;
+  height: 50px;
+  position: fixed;
+  top: 75px;
+  right: 75px;
+  color: #bbbbbb;
+  opacity: 0.5;
+  z-index: 2;
+}
+
+.linked-icon svg {
+  width: 50px;
+  height: 50px;
+}
+
+.github-icon a:visited {
+  color: #bbbbbb;
+}
+
+.linked-icon a:visited {
+  color: #bbbbbb;
+}
+
+.github-icon {
+  transition: all 0.3s ease;
+}
+
+.linked-icon {
+  transition: all 0.3s ease;
+}
+
+.github-icon:hover {
+  color: #bbbbbb;
+  opacity: 1;
+}
+
+.linked-icon:hover {
+  color: #bbbbbb;
+  opacity: 1;
 }
 
 .page-container {
@@ -119,4 +178,46 @@ canvas {
 .page-container div {
   width: 100%;
   max-width: 100%;
+}
+
+@media screen and (max-width: 800px) {
+  .page-container .github-icon {
+    top: 60px;
+    left: 15px;
+  }
+
+  .page-container .linked-icon {
+    top: 60px;
+    right: 15px;
+  }
+
+  canvas {
+    border: solid 5px black;
+    border-top-width: 50px;
+    border-bottom-width: 50px;
+  }
+
+  .pickableCanvas:before {
+    border: solid 0.5px #666666;
+    left: 5px;
+    right: 5px;
+  }
+  
+  .pickableCanvas:after {
+    border: solid 0.5px #666666;
+  }
+}
+
+@media screen and (max-height: 400px) {
+  canvas {
+    border: solid 5px black;
+    border-left-width: 50px;
+    border-right-width: 50px;
+  }
+
+  .pickableCanvas:before {
+    border: solid 0.5px #666666;
+    top: 5px;
+    bottom: 5px;
+  }
 }

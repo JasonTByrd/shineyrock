@@ -8,7 +8,7 @@ import * as actionTypes from '../store/actions'
 import { Water } from 'three/examples/jsm/objects/Water.js';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import waternormals from '../assets/textures/water/waternormals.jpg';
-import droidSans from '../assets/fonts/droid/droid_sans_bold.typeface.json'
+//import droidSans from '../assets/fonts/droid/droid_sans_bold.typeface.json'
 import helvetica from '../assets/fonts/helvetiker_regular.typeface.json'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 //import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -39,6 +39,10 @@ class CanvasComponent extends Component {
   colorFlashInteval;
   pointerLockedStatus = false;
   payload = 5;
+  turningLeft = false;
+  turningRight = false;
+  cameraOriginalRotation;
+  mobile;
 
   //Water
   waterGeometry;
@@ -142,6 +146,8 @@ class CanvasComponent extends Component {
     window.addEventListener('keyup', this.keyUp);
     window.addEventListener('keyup', this.keyUp);
     window.addEventListener('resize', this.onWindowResize, false );
+
+    this.mobile = 'ontouchstart' in document.documentElement;
 
 
     this.useWireframe = false;
@@ -253,37 +259,37 @@ class CanvasComponent extends Component {
 
     //about
 
-    this.textContainerAboutGeo = new THREE.BoxGeometry(8, 3, 1);
+    this.textContainerAboutGeo = new THREE.BoxGeometry(10, 3, 1);
     this.textContainerAboutMat = new THREE.MeshBasicMaterial({wireframe: true, color: 0x777777, transparent: true, opacity: 0.0});
     this.textContainerAbout = new THREE.Mesh(this.textContainerAboutGeo, this.textContainerAboutMat);
-    this.textContainerAbout.position.set(-12, 2, -16);
+    this.textContainerAbout.position.set(-14, 2, -17);
     this.textContainerAbout.rotation.y = 0.5;
     this.scene.add(this.textContainerAbout);
 
 
     this.textMaterial03 = new THREE.MeshPhongMaterial({color: 0xBBBBBB});
-    this.textGeometry03 = new THREE.TextGeometry("ABOUT", {
+    this.textGeometry03 = new THREE.TextGeometry("ABOUTME", {
         font: this.threeFont,
         size: 1.5,
         height: 0.05
     });
     this.textMesh03 = new THREE.Mesh(this.textGeometry03, this.textMaterial03);
     this.textMesh03.position.y += 0.5;
-    this.textMesh03.position.x -= 15.45;
+    this.textMesh03.position.x -= 18.45;
     this.textMesh03.position.z -= 15;
     this.textMesh03.castShadow = true;
     this.textMesh03.rotation.y = 0.5;
     this.scene.add(this.textMesh03);
 
     this.textMaterial04 = new THREE.MeshBasicMaterial({color: 0xffffff});
-    this.textGeometry04 = new THREE.TextGeometry("ABOUT", {
+    this.textGeometry04 = new THREE.TextGeometry("ABOUTME", {
         font: this.threeFont,
         size: 1.51,
         height: 0.01
     });
     this.textMesh04 = new THREE.Mesh(this.textGeometry04, this.textMaterial04);
     this.textMesh04.position.y += 0.45;
-    this.textMesh04.position.x -= 15.50;
+    this.textMesh04.position.x -= 18.50;
     this.textMesh04.position.z -= 14.98;
     this.textMesh04.castShadow = true;
     this.textMesh04.rotation.y = 0.5;
@@ -385,19 +391,12 @@ class CanvasComponent extends Component {
 
     this.scene.add(this.backgroundOrb);
     
-    if(window.innerWidth > 800) {
-      this.camera.position.set(0, this.player.height, 10);
-    }
-    else {
-      this.camera.position.set(0, this.player.height, 25);
-    }
     //this.camera.lookAt(new THREE.Vector3(0,this.player.height,0));
     
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.shadowMap.enabled = true;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.mount.appendChild(this.renderer.domElement);
-
 
     //rendering
 
@@ -408,6 +407,20 @@ class CanvasComponent extends Component {
       bloomRadius: 0.000000,
       scene: "Scene with Glow"
     };
+
+    if(!this.mobile) {
+      this.camera.position.set(0, this.player.height, 15);
+    }
+    else if (this.mobile && window.innerWidth > 1200) {
+      this.setState(this.props.onMobile(this.payload));
+      this.camera.position.set(0, this.player.height, 15);
+      this.bloomParams.bloomThreshold = 0.7;
+    }
+    else {
+      this.camera.position.set(0, this.player.height, 22);
+      this.setState(this.props.onMobile(this.payload));
+      this.bloomParams.bloomThreshold = 0.5;
+    }
 
     // this.bloomParams02 = {
     //   exposure: 0.2,
@@ -677,7 +690,7 @@ class CanvasComponent extends Component {
       this.textMaterial.color.b += 0.025
     }
 
-    if(this.textMesh03.hovered === true && (this.textMaterial03.color.r > 0.35 || this.textMaterial03.color.g > 0.75 || this.textMaterial03.color.b < 1)) {
+    if((this.textMesh03.hovered === true || (this.mobile && this.camera.rotation.y > 0.15)) && (this.textMaterial03.color.r > 0.35 || this.textMaterial03.color.g > 0.75 || this.textMaterial03.color.b < 1)) {
       this.pointLight02.color.r -= 0.02;
       this.pointLight02.color.g -= 0.01;
       this.pointLight02.color.b -= 0.0;
@@ -694,7 +707,7 @@ class CanvasComponent extends Component {
       this.textMaterial03.color.r -= 0.025
       this.textMaterial03.color.g -= 0.005
       this.textMaterial03.color.b += 0.015
-    } else if(this.textMesh03.hovered === false && (this.textMaterial03.color.r < 0.73 || this.textMaterial03.color.g < 0.73 || this.textMaterial03.color.b > 0.73)) {
+    } else if((this.textMesh03.hovered === false || (this.mobile && this.camera.rotation.y === 0.15)) && (this.textMaterial03.color.r < 0.73 || this.textMaterial03.color.g < 0.73 || this.textMaterial03.color.b > 0.73)) {
       this.pointLight02.color.r += 0.02;
       this.pointLight02.color.g += 0.01;
       this.pointLight02.color.b += 0.0;
@@ -713,7 +726,7 @@ class CanvasComponent extends Component {
       this.textMaterial03.color.b -= 0.015
     }
 
-    if(this.textMesh05.hovered === true && (this.textMaterial05.color.r > 0.75 || this.textMaterial05.color.g < 0.93 || this.textMaterial05.color.b > 0.65)) {
+    if((this.textMesh05.hovered === true || (this.mobile && (this.camera.rotation.y < 0.25 && this.camera.rotation.y > -0.25))) && (this.textMaterial05.color.r > 0.75 || this.textMaterial05.color.g < 0.93 || this.textMaterial05.color.b > 0.65)) {
 
       this.pointLight02.color.r -= 0.01;
       this.pointLight02.color.g -= 0.0;
@@ -732,7 +745,7 @@ class CanvasComponent extends Component {
       this.textMaterial05.color.g += 0.015
       this.textMaterial05.color.b -= 0.015
 
-    } else if(this.textMesh05.hovered === false && (this.textMaterial05.color.r < 0.73 || this.textMaterial05.color.g > 0.73 || this.textMaterial05.color.b < 0.73)) {
+    } else if((this.textMesh05.hovered === false || (this.mobile && (this.camera.rotation.y > -0.25 && this.camera.rotation.y < -0.25))) && (this.textMaterial05.color.r < 0.73 || this.textMaterial05.color.g > 0.73 || this.textMaterial05.color.b < 0.73)) {
 
       this.pointLight02.color.r += 0.01;
       this.pointLight02.color.g += 0.00;
@@ -753,7 +766,7 @@ class CanvasComponent extends Component {
 
     }
 
-    if(this.textMesh07.hovered === true && (this.textMaterial07.color.r < 0.9 || this.textMaterial07.color.g > 0.45 || this.textMaterial07.color.b > 0.70)) {
+    if((this.textMesh07.hovered === true || (this.mobile && this.camera.rotation.y < -0.15)) && (this.textMaterial07.color.r < 0.9 || this.textMaterial07.color.g > 0.45 || this.textMaterial07.color.b > 0.70)) {
 
       this.pointLight02.color.r -= 0.0;
       this.pointLight02.color.g -= 0.02;
@@ -772,7 +785,7 @@ class CanvasComponent extends Component {
       this.textMaterial07.color.g -= 0.025
       this.textMaterial07.color.b -= 0.004
 
-    } else if(this.textMesh07.hovered === false && (this.textMaterial07.color.r > 0.73 || this.textMaterial07.color.g < 0.73 || this.textMaterial07.color.b < 0.73)) {
+    } else if((this.textMesh07.hovered === false || (this.mobile && this.camera.rotation.y > -0.15)) && (this.textMaterial07.color.r > 0.73 || this.textMaterial07.color.g < 0.73 || this.textMaterial07.color.b < 0.73)) {
 
       this.pointLight02.color.r += 0.0;
       this.pointLight02.color.g += 0.02;
@@ -793,6 +806,18 @@ class CanvasComponent extends Component {
 
     }
 
+    if (this.turningLeft === true && this.camera.rotation.y < this.cameraOriginalRotation + 0.330) {
+      this.camera.rotation.y += 0.005;
+    } else {
+      this.turningLeft = false;
+    }
+
+    if (this.turningRight === true && this.camera.rotation.y > this.cameraOriginalRotation + -0.330) {
+      this.camera.rotation.y += -0.005;
+    } else {
+      this.turningRight = false;
+    }
+
     this.mesh.visible = false;
     this.cubeCameraTexture.position.copy(this.mesh.position);
     this.cubeCameraTexture.update(this.renderer, this.scene);
@@ -811,7 +836,9 @@ class CanvasComponent extends Component {
   };
 
   canvasClick = () => {
-    this.controls.lock(false);
+    if (!this.props.mobile) {
+      this.controls.lock(false);
+    }
   }
 
   clickOnObject = (event) => {
@@ -891,9 +918,11 @@ class CanvasComponent extends Component {
   }
 
   pointerLocked = () => {
-    this.pointerLockedStatus = !this.pointerLockedStatus;
-    this.setState(this.props.onTrueFalse(this.payload));
-    console.log(this.pointerLockedStatus, this.props.cross);
+    if (!this.props.mobile) {
+      this.pointerLockedStatus = !this.pointerLockedStatus;
+      this.setState(this.props.onTrueFalse(this.payload));
+      console.log(this.pointerLockedStatus, this.props.cross);
+    }
   }
 
   onWindowResize = () => {
@@ -907,12 +936,47 @@ class CanvasComponent extends Component {
     //this.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.mount.offsetHeight * this.pixelRatio );
   }
 
+  turnRight = () => {
+    if (this.turningRight === false && this.turningLeft === false) {
+      this.turningRight = true;
+      this.cameraOriginalRotation = this.camera.rotation.y;
+      console.log(this.turningRight);
+    }
+  }
+
+  turnLeft = () => {
+    if (this.turningLeft === false && this.turningRight === false) {
+      this.turningLeft = true;
+      this.cameraOriginalRotation = this.camera.rotation.y;
+    }
+  }
+
   render = () => {
     return (
       <div className="page-container">
+        <div className="github-icon">
+          <a href="https://www.github.com/jasontbyrd" target="_blank" rel="noopener noreferrer">
+            <svg aria-hidden="true" focusable="false" data-prefix="fab" data-icon="github" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" className="svg-inline--fa fa-github fa-w-16 fa-7x"><path fill="currentColor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z" className=""></path></svg>
+          </a>
+        </div>
+        <div className="linked-icon">
+          <a href="https://www.linkedin.com/in/jason-byrd/" target="_blank" rel="noopener noreferrer">
+            <svg aria-hidden="true" focusable="false" data-prefix="fab" data-icon="linkedin-in" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="svg-inline--fa fa-linkedin-in fa-w-14 fa-9x"><path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" className=""></path></svg>
+          </a>
+        </div>
         <div className="pickableCanvas" ref={ref => (this.mount = ref)} onClick={e => this.canvasClick(e)}>
+          {this.props.mobile &&
+            <div className="right-arrow" onClick={this.turnRight}>
+              <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="arrow-alt-circle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="svg-inline--fa fa-arrow-alt-circle-right fa-w-16 fa-9x"><path fill="currentColor" d="M504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256zm72 20v-40c0-6.6 5.4-12 12-12h116v-67c0-10.7 12.9-16 20.5-8.5l99 99c4.7 4.7 4.7 12.3 0 17l-99 99c-7.6 7.6-20.5 2.2-20.5-8.5v-67H140c-6.6 0-12-5.4-12-12z" className=""></path></svg>
+            </div>
+          }
           {this.props.cross &&
             <div className="cross-hair"></div>
+          }
+          {this.props.mobile &&
+            <div className="left-arrow" onClick={this.turnLeft}>
+              <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="arrow-alt-circle-left" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="svg-inline--fa fa-arrow-alt-circle-left fa-w-16 fa-9x"><path fill="currentColor" d="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm448 0c0 110.5-89.5 200-200 200S56 366.5 56 256 145.5 56 256 56s200 89.5 200 200zm-72-20v40c0 6.6-5.4 12-12 12H256v67c0 10.7-12.9 16-20.5 8.5l-99-99c-4.7-4.7-4.7-12.3 0-17l99-99c7.6-7.6 20.5-2.2 20.5 8.5v67h116c6.6 0 12 5.4 12 12z" className=""></path></svg>
+            </div>
           }
         </div>
       </div>
@@ -922,7 +986,8 @@ class CanvasComponent extends Component {
 
 const mapStateToProps = state => {
   return {
-    cross: state.crossHair
+    cross: state.crossHair,
+    mobile: state.mobile,
   };
 }
 
@@ -930,6 +995,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onTrueFalse: (payload) => {
       dispatch({type: actionTypes.TRUE_FALSE, payload: payload});
+    },
+    onMobile: (payload) => {
+      dispatch({type: actionTypes.MOBILE, payload: payload});
     }
   }
 }
