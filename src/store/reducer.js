@@ -1,7 +1,8 @@
 import * as actionTypes from './actions'
 
 const initialState = {
-    crossHair: false
+    crossHair: false,
+    mobile: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -11,6 +12,12 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 crossHair: !state.crossHair
+            };
+        case actionTypes.MOBILE:
+            console.log(action);
+            return {
+                ...state,
+                mobile: !state.mobile
             };
         default:
             return state;
