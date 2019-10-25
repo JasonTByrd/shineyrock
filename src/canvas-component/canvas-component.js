@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import PickHelper from "pick-helper";
 import { connect } from 'react-redux';
-import * as actionTypes from '../store/actions'
+import * as actionTypes from '../store/actions';
 import { Water } from 'three/examples/jsm/objects/Water.js';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import waternormals from '../assets/textures/water/waternormals.jpg';
@@ -21,12 +21,6 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 
 class CanvasComponent extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      //crossHair: false,
-    }
-  }
 
   scene; 
   camera;
@@ -241,10 +235,11 @@ class CanvasComponent extends Component {
         height: 0.05,
         italic: true
     });
+    this.textGeometry.center();
     this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
-    this.textMesh.position.y += 5;
-    this.textMesh.position.x -= 8.45;
-    this.textMesh.position.z -= 15;
+    this.textMesh.position.y += 6;
+    this.textMesh.position.x -= 0;
+    this.textMesh.position.z -= 14.98;
     this.textMesh.castShadow = true;
     this.scene.add(this.textMesh);
 
@@ -255,10 +250,11 @@ class CanvasComponent extends Component {
         height: 0.01,
         italic: true
     });
+    this.textGeometry02.center();
     this.textMesh02 = new THREE.Mesh(this.textGeometry02, this.textMaterial02);
-    this.textMesh02.position.y += 4.95;
-    this.textMesh02.position.x -= 8.50;
-    this.textMesh02.position.z -= 14.98;
+    this.textMesh02.position.y += 5.95;
+    this.textMesh02.position.x -= 0.00;
+    this.textMesh02.position.z -= 15.00;
     this.textMesh02.castShadow = true;
     this.scene.add(this.textMesh02);
 
@@ -272,7 +268,7 @@ class CanvasComponent extends Component {
     this.textContainerAboutGeo = new THREE.BoxGeometry(10, 3, 1);
     this.textContainerAboutMat = new THREE.MeshBasicMaterial({wireframe: true, color: 0x777777, transparent: true, opacity: 0.0});
     this.textContainerAbout = new THREE.Mesh(this.textContainerAboutGeo, this.textContainerAboutMat);
-    this.textContainerAbout.position.set(-14, 2, -17);
+    this.textContainerAbout.position.set(-13.5, 2, -17);
     this.textContainerAbout.rotation.y = 0.5;
     this.scene.add(this.textContainerAbout);
 
@@ -322,10 +318,11 @@ class CanvasComponent extends Component {
         size: 1.5,
         height: 0.05
     });
+    this.textGeometry05.center();
     this.textMesh05 = new THREE.Mesh(this.textGeometry05, this.textMaterial05);
-    this.textMesh05.position.y += 0.5;
-    this.textMesh05.position.x -= 5.45;
-    this.textMesh05.position.z -= 18;
+    this.textMesh05.position.y += 1.30;
+    this.textMesh05.position.x -= 0;
+    this.textMesh05.position.z -= 17.98;
     this.textMesh05.castShadow = true;
     this.scene.add(this.textMesh05);
 
@@ -335,10 +332,11 @@ class CanvasComponent extends Component {
         size: 1.51,
         height: 0.01
     });
+    this.textGeometry06.center();
     this.textMesh06 = new THREE.Mesh(this.textGeometry06, this.textMaterial06);
-    this.textMesh06.position.y += 0.45;
-    this.textMesh06.position.x -= 5.50;
-    this.textMesh06.position.z -= 17.98;
+    this.textMesh06.position.y += 1.25;
+    this.textMesh06.position.x -= 0;
+    this.textMesh06.position.z -= 18.00;
     this.textMesh06.castShadow = true;
     this.scene.add(this.textMesh06);
 
@@ -349,7 +347,7 @@ class CanvasComponent extends Component {
     this.textContainerContactGeo = new THREE.BoxGeometry(10, 3, 1);
     this.textContainerContactMat = new THREE.MeshBasicMaterial({wireframe: true, color: 0x777777, transparent: true, opacity: 0.0});
     this.textContainerContact = new THREE.Mesh(this.textContainerContactGeo, this.textContainerContactMat);
-    this.textContainerContact.position.set(14, 2, -16.5);
+    this.textContainerContact.position.set(13, 2, -16.5);
     this.textContainerContact.rotation.y = -0.5;
     this.scene.add(this.textContainerContact);
 
@@ -601,6 +599,10 @@ class CanvasComponent extends Component {
     var time = performance.now() * 0.001;
 
     requestAnimationFrame(this.animate);
+
+    if (this.props.paused) {
+      return;
+    }
 
     this.water.material.uniforms[ 'time' ].value += 0.2 / 60.0;
 
@@ -868,7 +870,10 @@ class CanvasComponent extends Component {
 
   clickOnObject = (event) => {
     let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
-    console.log(picked);
+    if(picked === this.textContainerAbout) {
+      this.setState(this.props.onAbout());
+      this.setState(this.props.onPause());
+    }
     //console.log('test', event);
     // if (this.pointerLockedStatus) {
     //   let picked = this.pickHelper.pickCenter(this.scene, this.camera, this.mount);
@@ -1035,7 +1040,9 @@ const mapStateToProps = state => {
   return {
     cross: state.crossHair,
     mobile: state.mobile,
-    fps: state.fps
+    fps: state.fps,
+    about: state.about,
+    paused: state.paused,
   };
 }
 
@@ -1049,7 +1056,13 @@ const mapDispatchToProps = (dispatch) => {
     },
     onFpsUpdate: (payload) => {
       dispatch({type: actionTypes.FPSUPDATE, payload: payload});
-    }
+    },
+    onAbout: () => {
+      dispatch({type: actionTypes.ONABOUT});
+    },
+    onPause: () => {
+      dispatch({type: actionTypes.ONPAUSE});
+    },
   }
 }
 
