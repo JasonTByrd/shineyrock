@@ -180,6 +180,30 @@ canvas {
   max-width: 100%;
 }
 
+.page-container .control-toggle-container {
+  width: 230px;
+  padding: 10px;
+  position: fixed;
+  z-index: 2;
+  bottom: 100px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  opacity: 0.2;
+  font-size: 12px;
+  border: 1px solid #EEEEEE;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.page-container .control-toggle-container:hover {
+  opacity: 0.5;
+}
+
+.page-container .control-toggle-container svg {
+  width: 40px;
+  height: 40px;
+}
+
 @media screen and (max-width: 800px) {
   .page-container .github-icon {
     top: 60px;

@@ -11,12 +11,12 @@ import waternormals from '../assets/textures/water/waternormals.jpg';
 //import droidSans from '../assets/fonts/droid/droid_sans_bold.typeface.json'
 import helvetica from '../assets/fonts/helvetiker_regular.typeface.json'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-//import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+//import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { SSAARenderPass } from 'three/examples/jsm/postprocessing/SSAARenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 //import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
-import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
+//import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
 
 
 class CanvasComponent extends Component {
@@ -132,6 +132,11 @@ class CanvasComponent extends Component {
   bloomParams02;
   ssaaRenderPass;
 
+  times = [];
+  fps;
+
+  fpsParse = 60;
+
   //reflection
   cubeCameraTexture;
 
@@ -140,6 +145,11 @@ class CanvasComponent extends Component {
   player;
 
   componentDidMount() {
+
+    setTimeout(() => {
+      this.fpsParse = this.fps;
+      console.log(this.fpsParse);
+    }, 3000);
 
     window.addEventListener('mousemove', this.mouseMoveSelection);
     window.addEventListener('keydown', this.keyDown);
@@ -378,10 +388,10 @@ class CanvasComponent extends Component {
     
     this.meshFloor = new THREE.Mesh(
       new THREE.PlaneGeometry(100,100, 1,1),
-      new THREE.MeshPhongMaterial({color:0xffffff, wireframe: false})
+      new THREE.MeshLambertMaterial({color:0x000000, wireframe: false})
     );
     this.meshFloor.rotation.x -= Math.PI / 2; // Rotate the floor 90 degrees
-    this.meshFloor.position.y += -1;
+    this.meshFloor.position.y += -0.2;
     this.scene.add(this.meshFloor);
 
     this.backgroundOrb = new THREE.Mesh(
@@ -431,22 +441,25 @@ class CanvasComponent extends Component {
     // };
 
 
-    this.composer1 = new EffectComposer( this.renderer )
+    this.composer1 = new EffectComposer( this.renderer );
+    this.composer2 = new EffectComposer( this.renderer );
     //this.fxaaPass = new ShaderPass( FXAAShader );
     //this.pixelRatio = this.renderer.getPixelRatio();
 
     this.ssaaRenderPass = new SSAARenderPass( this.scene, this.camera );
     this.ssaaRenderPass.unbiased = true;
-    this.ssaaRenderPass.sampleLevel = 2;
+    this.ssaaRenderPass.sampleLevel = 4;
     this.composer1.addPass( this.ssaaRenderPass );
 
     //this.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.mount.offsetWidth * this.pixelRatio );
     //this.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.mount.offsetHeight * this.pixelRatio );
 
-    this.copyPass = new ShaderPass( CopyShader );
-    this.composer1.addPass( this.copyPass );
+    //this.copyPass = new ShaderPass( CopyShader );
+    //this.composer1.addPass( this.copyPass );
 
-    // this.renderPass = new RenderPass( this.scene, this.camera );
+    this.renderPass = new RenderPass( this.scene, this.camera );
+    this.composer2.addPass( this.renderPass );
+
     this.bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
     this.bloomPass.threshold = this.bloomParams.bloomThreshold;
     this.bloomPass.strength = this.bloomParams.bloomStrength;
@@ -457,8 +470,8 @@ class CanvasComponent extends Component {
     // this.bloomPass02.strength = this.bloomParams02.bloomStrength;
     // this.bloomPass02.radius = this.bloomParams02.bloomRadius;
 
-    //this.composer1.addPass( this.renderPass );
     this.composer1.addPass( this.bloomPass );
+    this.composer2.addPass( this.bloomPass );
     //this.composer1.addPass( this.bloomPass02 );
 
     //rendering
@@ -500,7 +513,7 @@ class CanvasComponent extends Component {
 
     this.water.material.uniforms.size.value = 4;
 
-    console.log(this.water);
+    //console.log(this.water);
 
 
     this.water.rotation.x = - Math.PI / 2;
@@ -563,7 +576,7 @@ class CanvasComponent extends Component {
 
 
 
-    window.addEventListener('click', this.clickOnObject);
+    window.addEventListener('click', this.clickOnObject, false);
 
     document.addEventListener('pointerlockchange', this.pointerLocked);
 
@@ -806,13 +819,13 @@ class CanvasComponent extends Component {
 
     }
 
-    if (this.turningLeft === true && this.camera.rotation.y < this.cameraOriginalRotation + 0.330) {
+    if (this.turningLeft === true && this.camera.rotation.y < this.cameraOriginalRotation + 0.330 && this.camera.rotation.y < 0.660) {
       this.camera.rotation.y += 0.005;
     } else {
       this.turningLeft = false;
     }
 
-    if (this.turningRight === true && this.camera.rotation.y > this.cameraOriginalRotation + -0.330) {
+    if (this.turningRight === true && this.camera.rotation.y > this.cameraOriginalRotation + -0.330  && this.camera.rotation.y > -0.660) {
       this.camera.rotation.y += -0.005;
     } else {
       this.turningRight = false;
@@ -826,7 +839,19 @@ class CanvasComponent extends Component {
     
     this.camera.position.y = this.player.height;
 
-    this.composer1.render();
+    if(this.fpsParse > 30) {
+      this.composer1.render();
+    } else {
+      this.composer2.render();
+    }
+
+    const now = performance.now();
+    while (this.times.length > 0 && this.times[0] <= now - 1000) {
+      this.times.shift();
+    }
+    this.times.push(now);
+    this.fps = this.times.length;
+    this.setState(this.props.onFpsUpdate(this.fps));
   }
 
   generateRandomNumber(min, max) {
@@ -835,13 +860,15 @@ class CanvasComponent extends Component {
       return highlightedNumber;
   };
 
-  canvasClick = () => {
+  controlsClick = (event) => {
     if (!this.props.mobile) {
       this.controls.lock(false);
     }
   }
 
   clickOnObject = (event) => {
+    let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
+    console.log(picked);
     //console.log('test', event);
     // if (this.pointerLockedStatus) {
     //   let picked = this.pickHelper.pickCenter(this.scene, this.camera, this.mount);
@@ -951,6 +978,19 @@ class CanvasComponent extends Component {
     }
   }
 
+  // refreshLoop = () => {
+  //   window.requestAnimationFrame(() => {
+  //     const now = performance.now();
+  //     while (this.times.length > 0 && this.times[0] <= now - 1000) {
+  //       this.times.shift();
+  //     }
+  //     this.times.push(now);
+  //     this.fps = this.times.length;
+  //     refreshLoop();
+  //     console.log(this.fps);
+  //   });
+  // }
+
   render = () => {
     return (
       <div className="page-container">
@@ -964,7 +1004,7 @@ class CanvasComponent extends Component {
             <svg aria-hidden="true" focusable="false" data-prefix="fab" data-icon="linkedin-in" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="svg-inline--fa fa-linkedin-in fa-w-14 fa-9x"><path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" className=""></path></svg>
           </a>
         </div>
-        <div className="pickableCanvas" ref={ref => (this.mount = ref)} onClick={e => this.canvasClick(e)}>
+        <div className="pickableCanvas" ref={ref => (this.mount = ref)}>
           {this.props.mobile &&
             <div className="right-arrow" onClick={this.turnRight}>
               <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="arrow-alt-circle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="svg-inline--fa fa-arrow-alt-circle-right fa-w-16 fa-9x"><path fill="currentColor" d="M504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256zm72 20v-40c0-6.6 5.4-12 12-12h116v-67c0-10.7 12.9-16 20.5-8.5l99 99c4.7 4.7 4.7 12.3 0 17l-99 99c-7.6 7.6-20.5 2.2-20.5-8.5v-67H140c-6.6 0-12-5.4-12-12z" className=""></path></svg>
@@ -978,6 +1018,13 @@ class CanvasComponent extends Component {
               <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="arrow-alt-circle-left" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="svg-inline--fa fa-arrow-alt-circle-left fa-w-16 fa-9x"><path fill="currentColor" d="M8 256c0 137 111 248 248 248s248-111 248-248S393 8 256 8 8 119 8 256zm448 0c0 110.5-89.5 200-200 200S56 366.5 56 256 145.5 56 256 56s200 89.5 200 200zm-72-20v40c0 6.6-5.4 12-12 12H256v67c0 10.7-12.9 16-20.5 8.5l-99-99c-4.7-4.7-4.7-12.3 0-17l99-99c7.6-7.6 20.5-2.2 20.5 8.5v67h116c6.6 0 12 5.4 12 12z" className=""></path></svg>
             </div>
           }
+          {(!this.props.mobile && !this.props.cross) &&
+            <div className="control-toggle-container" onClick={e => this.controlsClick(e)}>
+              <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="keyboard" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="svg-inline--fa fa-keyboard fa-w-18 fa-9x"><path fill="currentColor" d="M528 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h480c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm8 336c0 4.411-3.589 8-8 8H48c-4.411 0-8-3.589-8-8V112c0-4.411 3.589-8 8-8h480c4.411 0 8 3.589 8 8v288zM170 270v-28c0-6.627-5.373-12-12-12h-28c-6.627 0-12 5.373-12 12v28c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12zm96 0v-28c0-6.627-5.373-12-12-12h-28c-6.627 0-12 5.373-12 12v28c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12zm96 0v-28c0-6.627-5.373-12-12-12h-28c-6.627 0-12 5.373-12 12v28c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12zm96 0v-28c0-6.627-5.373-12-12-12h-28c-6.627 0-12 5.373-12 12v28c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12zm-336 82v-28c0-6.627-5.373-12-12-12H82c-6.627 0-12 5.373-12 12v28c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12zm384 0v-28c0-6.627-5.373-12-12-12h-28c-6.627 0-12 5.373-12 12v28c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12zM122 188v-28c0-6.627-5.373-12-12-12H82c-6.627 0-12 5.373-12 12v28c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12zm96 0v-28c0-6.627-5.373-12-12-12h-28c-6.627 0-12 5.373-12 12v28c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12zm96 0v-28c0-6.627-5.373-12-12-12h-28c-6.627 0-12 5.373-12 12v28c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12zm96 0v-28c0-6.627-5.373-12-12-12h-28c-6.627 0-12 5.373-12 12v28c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12zm96 0v-28c0-6.627-5.373-12-12-12h-28c-6.627 0-12 5.373-12 12v28c0 6.627 5.373 12 12 12h28c6.627 0 12-5.373 12-12zm-98 158v-16c0-6.627-5.373-12-12-12H180c-6.627 0-12 5.373-12 12v16c0 6.627 5.373 12 12 12h216c6.627 0 12-5.373 12-12z" className=""></path></svg>
+              <p>CLICK HERE TO NAVIGATE WITH WASD</p>
+              <p>FPS = {this.props.fps}</p>
+            </div>
+          }
         </div>
       </div>
     )
@@ -988,6 +1035,7 @@ const mapStateToProps = state => {
   return {
     cross: state.crossHair,
     mobile: state.mobile,
+    fps: state.fps
   };
 }
 
@@ -998,6 +1046,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     onMobile: (payload) => {
       dispatch({type: actionTypes.MOBILE, payload: payload});
+    },
+    onFpsUpdate: (payload) => {
+      dispatch({type: actionTypes.FPSUPDATE, payload: payload});
     }
   }
 }
