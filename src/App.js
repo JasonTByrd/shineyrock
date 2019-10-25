@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import './App.css';
 import CanvasComponent from './canvas-component/canvas-component.js';
 import AboutComponent from './about-page-component/about-page-component.js';
+import PortfolioComponent from './portfolio-page-component/portfolio-page-component.js';
+import ContactComponent from './contact-page-component/contact-page-component.js';
 import { connect } from 'react-redux';
 import * as actionTypes from './store/actions';
 
@@ -26,6 +28,8 @@ class App extends Component {
         <CanvasComponent></CanvasComponent>
       </header>
       {this.props.about && <AboutComponent></AboutComponent>}
+      {this.props.portfolio && <PortfolioComponent></PortfolioComponent>}
+      {this.props.contact && <ContactComponent></ContactComponent>}
     </div>
   ) }
 }
@@ -33,6 +37,8 @@ class App extends Component {
 const mapStateToProps = state => {
   return {
     about: state.about,
+    portfolio: state.portfolio,
+    contact: state.contact,
   };
 }
 
@@ -40,6 +46,12 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onAbout: () => {
       dispatch({type: actionTypes.ONABOUT});
+    },
+    onPortfolio: () => {
+      dispatch({type: actionTypes.ONPORTFOLIO});
+    },
+    onContact: () => {
+      dispatch({type: actionTypes.ONCONTACT});
     },
   }
 }

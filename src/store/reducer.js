@@ -5,6 +5,8 @@ const initialState = {
     mobile: false,
     fps: 0,
     about: false,
+    contact: false,
+    portfolio: false,
     paused: false,
 };
 
@@ -29,6 +31,16 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 about: !state.about
+            };
+        case actionTypes.ONPORTFOLIO:
+            return {
+                ...state,
+                portfolio: !state.portfolio
+            };
+        case actionTypes.ONCONTACT:
+            return {
+                ...state,
+                contact: !state.contact
             };
         case actionTypes.ONPAUSE:
             return {

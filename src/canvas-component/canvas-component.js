@@ -870,34 +870,21 @@ class CanvasComponent extends Component {
 
   clickOnObject = (event) => {
     let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
+
     if(picked === this.textContainerAbout) {
       this.setState(this.props.onAbout());
       this.setState(this.props.onPause());
     }
-    //console.log('test', event);
-    // if (this.pointerLockedStatus) {
-    //   let picked = this.pickHelper.pickCenter(this.scene, this.camera, this.mount);
-    //   if (picked) {
-    //     if (picked.material.wireframe === true) {
-    //       picked.material.wireframe = false;
-    //     }
-    //     else {
-    //       picked.material.wireframe = true;
-    //     }
-    //   }
-    //   console.log(this.pickHelper.pickCenter(this.scene, this.camera, this.mount));
-    // } else {
-    //   let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
-    //   if (picked) {
-    //     if (picked.material.wireframe === true) {
-    //       picked.material.wireframe = false;
-    //     }
-    //     else {
-    //       picked.material.wireframe = true;
-    //     }
-    //   }
-    //   console.log(this.pickHelper.pick(event, this.scene, this.camera, this.mount));
-    // }
+
+    if(picked === this.textContainerPortfolio) {
+      this.setState(this.props.onPortfolio());
+      this.setState(this.props.onPause());
+    }
+
+    if(picked === this.textContainerContact) {
+      this.setState(this.props.onContact());
+      this.setState(this.props.onPause());
+    }
   }
 
   mouseMoveSelection = (event) => {
@@ -1042,6 +1029,8 @@ const mapStateToProps = state => {
     mobile: state.mobile,
     fps: state.fps,
     about: state.about,
+    portfolio: state.portfolio,
+    contact: state.contact,
     paused: state.paused,
   };
 }
@@ -1059,6 +1048,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     onAbout: () => {
       dispatch({type: actionTypes.ONABOUT});
+    },
+    onPortfolio: () => {
+      dispatch({type: actionTypes.ONPORTFOLIO});
+    },
+    onContact: () => {
+      dispatch({type: actionTypes.ONCONTACT});
     },
     onPause: () => {
       dispatch({type: actionTypes.ONPAUSE});
