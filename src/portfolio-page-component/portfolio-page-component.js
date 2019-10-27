@@ -20,6 +20,8 @@ class PortfolioComponent extends Component {
 const mapStateToProps = state => {
   return {
     about: state.about,
+    portfolio: state.portfolio,
+    contact: state.contact,
   };
 }
 
@@ -27,6 +29,12 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onAbout: () => {
       dispatch({type: actionTypes.ONABOUT});
+    },
+    onPortfolio: () => {
+      dispatch({type: actionTypes.ONPORTFOLIO});
+    },
+    onContact: () => {
+      dispatch({type: actionTypes.ONCONTACT});
     },
   }
 }

@@ -869,27 +869,41 @@ class CanvasComponent extends Component {
   }
 
   clickOnObject = (event) => {
+    if(this.props.about || this.props.portfolio || this.props.contact) {
+      return 0;
+    }
+
     let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
 
     if(picked === this.textContainerAbout) {
       this.setState(this.props.onAbout());
-      this.setState(this.props.onPause());
+      // setTimeout(() => {
+      //   this.setState(this.props.onPause());
+      // }, 1000);
     }
 
     if(picked === this.textContainerPortfolio) {
       this.setState(this.props.onPortfolio());
-      this.setState(this.props.onPause());
+      // setTimeout(() => {
+      //   this.setState(this.props.onPause());
+      // }, 1000);
     }
 
     if(picked === this.textContainerContact) {
       this.setState(this.props.onContact());
-      this.setState(this.props.onPause());
+      // setTimeout(() => {
+      //   this.setState(this.props.onPause());
+      // }, 1000);
     }
   }
 
   mouseMoveSelection = (event) => {
     if (this.pointerLockedStatus) {
     } else {
+      if(this.props.about || this.props.portfolio || this.props.contact) {
+        return 0;
+      }
+
       let picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
 
       if (picked === this.textContainerLogo && picked !== false) {
@@ -950,6 +964,7 @@ class CanvasComponent extends Component {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(this.mount.clientWidth, this.mount.clientHeight);
     this.composer1.setSize(this.mount.clientWidth, this.mount.clientHeight);
+    this.composer2.setSize(this.mount.clientWidth, this.mount.clientHeight);
     //this.pixelRatio = this.renderer.getPixelRatio();
     //this.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.mount.offsetWidth * this.pixelRatio );
     //this.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.mount.offsetHeight * this.pixelRatio );

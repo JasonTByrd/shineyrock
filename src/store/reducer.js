@@ -8,6 +8,7 @@ const initialState = {
     contact: false,
     portfolio: false,
     paused: false,
+    show: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -46,6 +47,11 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 paused: !state.paused
+            };
+        case actionTypes.ONSHOW:
+            return {
+                ...state,
+                show: !state.show
             };
         default:
             return state;
