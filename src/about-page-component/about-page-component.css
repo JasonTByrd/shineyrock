@@ -94,6 +94,7 @@
   transition: all 1s ease !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  filter: blur(5px);
 }
 
 .what-i-do-header-2 {
@@ -107,6 +108,7 @@
   transition: all 1s ease !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  filter: blur(5px);
 }
 
 .what-i-do-text {
@@ -118,9 +120,12 @@
   transition: all 1s ease !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  filter: blur(5px);
 }
 
 .show .what-i-do-text,
-.show .what-i-do-header {
+.show .what-i-do-header,
+.show .what-i-do-header-2 {
   opacity: 1;
+  filter: blur(0px);
 }
