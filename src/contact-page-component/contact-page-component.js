@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import './contact-page-component.css';
 import { connect } from 'react-redux';
 import * as actionTypes from '../store/actions';
-import contactHeaderImage from '../assets/images/about-header.jpg';
+import contactHeaderImage from '../assets/images/contact-header.jpg';
 
 class ContactComponent extends Component {
 
@@ -18,7 +18,7 @@ class ContactComponent extends Component {
     // this.setState(this.props.onPause());
     setTimeout(() => {
       this.setState(this.props.onContact());
-    }, 500);
+    }, 1000);
   }
 
   render() {

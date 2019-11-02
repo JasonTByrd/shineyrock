@@ -119,7 +119,7 @@ canvas {
   position: fixed;
   top: 75px;
   left: 75px;
-  color: #bbbbbb;
+  color: #bbbbbb !important;
   opacity: 0.5;
   z-index: 2;
 }
@@ -136,7 +136,7 @@ canvas {
   position: fixed;
   top: 75px;
   right: 75px;
-  color: #bbbbbb;
+  color: #bbbbbb !important;
   opacity: 0.5;
   z-index: 2;
 }

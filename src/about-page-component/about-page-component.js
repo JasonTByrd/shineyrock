@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import './about-page-component.css';
 import { connect } from 'react-redux';
 import * as actionTypes from '../store/actions';
-import aboutHeaderImage from '../assets/images/about-header.jpg';
+import aboutHeaderImage from '../assets/images/about-header-2.jpg';
 
 class AboutComponent extends Component {
 

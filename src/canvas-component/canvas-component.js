@@ -604,6 +604,20 @@ class CanvasComponent extends Component {
       return;
     }
 
+    if (this.props.about) {
+      this.textMesh03.hovered = true;
+      this.textMesh05.hovered = false;
+      this.textMesh07.hovered = false;
+    } else if (this.props.portfolio) {
+      this.textMesh05.hovered = true;
+      this.textMesh03.hovered = false;
+      this.textMesh07.hovered = false;
+    } else if (this.props.contact) {
+      this.textMesh07.hovered = true;
+      this.textMesh03.hovered = false;
+      this.textMesh05.hovered = false;
+    }
+
     this.water.material.uniforms[ 'time' ].value += 0.2 / 60.0;
 
     this.pointLightGroup02.position.y = Math.sin( time ) * 0.1 + 1.2;
