@@ -666,7 +666,7 @@ class CanvasComponent extends Component {
       }
 
     } else {
-
+      
     }
 
     if(this.textMesh.hovered === true && (this.textMaterial.color.r < 1 || this.textMaterial.color.g > 0.25 || this.textMaterial.color.b > 0.25)) {

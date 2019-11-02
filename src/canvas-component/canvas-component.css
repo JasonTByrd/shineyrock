@@ -154,6 +154,15 @@ canvas {
   color: #bbbbbb;
 }
 
+.github-icon a {
+  color: #bbbbbb;
+}
+
+.linked-icon a {
+  color: #bbbbbb;
+}
+
+
 .github-icon {
   transition: all 0.3s ease;
 }
