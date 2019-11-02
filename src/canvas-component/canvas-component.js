@@ -605,15 +605,15 @@ class CanvasComponent extends Component {
     }
 
     if (this.props.about) {
-      this.textMesh03.hovered = true;
+      this.textMesh03.hovered = false;
       this.textMesh05.hovered = false;
       this.textMesh07.hovered = false;
     } else if (this.props.portfolio) {
-      this.textMesh05.hovered = true;
+      this.textMesh05.hovered = false;
       this.textMesh03.hovered = false;
       this.textMesh07.hovered = false;
     } else if (this.props.contact) {
-      this.textMesh07.hovered = true;
+      this.textMesh07.hovered = false;
       this.textMesh03.hovered = false;
       this.textMesh05.hovered = false;
     }
