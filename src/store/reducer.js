@@ -9,6 +9,7 @@ const initialState = {
     portfolio: false,
     paused: false,
     show: false,
+    mailSent: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -52,6 +53,11 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 show: !state.show
+            };
+        case actionTypes.ONSENT:
+            return {
+                ...state,
+                mailSent: !state.mailSent
             };
         default:
             return state;

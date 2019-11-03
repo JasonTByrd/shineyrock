@@ -11,16 +11,16 @@ class PortfolioComponent extends Component {
 
   componentDidMount() {
     setTimeout(() => {
-      this.setState(this.props.onShow());
+      this.props.onShow();
       console.log(this.props.show);
     }, 0);
   }
 
   closeMe = () => {
-    this.setState(this.props.onShow());
+    this.props.onShow();
     // this.setState(this.props.onPause());
     setTimeout(() => {
-      this.setState(this.props.onPortfolio());
+      this.props.onPortfolio();
     }, 1000);
   }
 

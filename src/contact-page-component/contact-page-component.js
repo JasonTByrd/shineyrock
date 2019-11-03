@@ -3,22 +3,57 @@ import './contact-page-component.css';
 import { connect } from 'react-redux';
 import * as actionTypes from '../store/actions';
 import contactHeaderImage from '../assets/images/contact-header.jpg';
+import axios from 'axios';
+
+const API_PATH = 'https://shineyrock.org/api/contact/index.php';
 
 class ContactComponent extends Component {
 
+  formState = {
+    fname: '',
+    lname: '',
+    email: '',
+    message: '',
+    error: null,
+    hpot: '',
+  }
+
   componentDidMount() {
     setTimeout(() => {
-      this.setState(this.props.onShow());
+      this.props.onShow();
       console.log(this.props.show);
     }, 0);
   }
 
   closeMe = () => {
-    this.setState(this.props.onShow());
+    this.props.onShow();
     // this.setState(this.props.onPause());
     setTimeout(() => {
-      this.setState(this.props.onContact());
+      this.props.onContact();
     }, 1000);
+  }
+
+  handleFormSubmit = ( event ) => {
+    if(!this.props.mailSent && !this.formState.hpot) {
+      event.preventDefault();
+      axios({
+        method: 'post',
+        url: `${API_PATH}`,
+        headers: { 'content-type': 'application/json' },
+        data: this.formState
+      })
+      .then(result => {
+        this.props.onSent();
+      })
+      .catch(error => { 
+        this.formState.error = error.message 
+      });
+
+      setTimeout(() => {
+        this.props.onSent();
+        document.querySelector('.contact-form').reset();
+      }, 5000);
+    }
   }
 
   render() {
@@ -35,49 +70,27 @@ class ContactComponent extends Component {
         <section className="contact-content">
           <div className="what-i-do">
             <h1 className="what-i-do-header">
-              WHAT I DO
+              CONTACT ME
             </h1>
             <p className="what-i-do-text">
-              I am a front-end developer and/or software engineer stationed and working professionally in the Chicago Metropolitan Area. I specialize in JavaScript and its frameworks including React and Angular, I am also familiar with many libraries but more importantly know how to pick up and learn them quickly. I have a deep understanding of HTML and CSS as well, which I believe is imperative for most JavaScript work. 
+              Send me a message if you'd like to learn more about me or any of my projects. I look forward to hearing from you!
             </p>
             <h2 className="what-i-do-header-2">
-              Current Favorite Technologies
+              Send Me A Message
             </h2>
-            <ul className="what-i-do-text">
-              <li>
-                JavaScript
-              </li>
-              <li>
-                three.js
-              </li>
-              <li>
-                React
-              </li>
-              <li>
-                HTML/JSX
-              </li>
-              <li>
-                CSS/SASS
-              </li>
-            </ul>
-            <h2 className="what-i-do-header-2">
-              My Experience
-            </h2>
-            <p className="what-i-do-text">
-              I have nearly two years of professional experience at this point, having been stationed in the field since early 2017. I love the work I do and have worked with some rather prestegious companies on projects ranging from simple front-facing 'broshure' style websites to fully-functional web applications with multiple 'widgets' and tools contained within.
-            </p>
-            <h1 className="what-i-do-header">
-              WHO I AM
-            </h1>
-            <p className="what-i-do-text">
-              My name is Jason, am an avid tech enthusiast and lover of all things complex. I have a rabid thirst for knowledge and I feel if I'm not learning I'm stagnating, so I seek to advance my knowledge and understanding of things I'm passionate contact constantly.
-            </p>
-            <h2 className="what-i-do-header-2">
-              Technology Is In My Blood
-            </h2>
-            <p className="what-i-do-text">
-              My father and older brother are also software engineers/developers. Thanks to our Dad we were able to experience the wonders of technology at an early age, working with DOS as young as 3-4 years old and continuing to work with computers for the rest of our lives. There's nothing I enjoy more than spending my time working with complex systems and learning even more contact the ins and outs of technology.
-            </p>
+            <form className="contact-form">
+              <input type="text" name="" id="fname" className="name-input input-field" placeholder="First Name *" onChange={e => { this.formState.fname = e.target.value }}/>
+              <input type="text" name="" id="lname" className="name-input input-field" placeholder="Last Name" onChange={e => { this.formState.lname = e.target.value }}/>
+              <input type="email" name="" id="email" autoCapitalize="none" autoCorrect="off" className="email-input input-field" placeholder="E-mail (example@example.com) *" onChange={e => { this.formState.email = e.target.value }}/>
+              <textarea name="" id="message" className="message-input input-field--multiline" placeholder="Your Message *" onChange={e => { this.formState.message = e.target.value }}></textarea>
+              <input type="submit" onClick={e => this.handleFormSubmit(e)} value="Submit" className="submit-input"/>
+              <div className="form-message">
+                {this.props.mailSent &&
+                  <div>Your message has been sent, thank you!</div>
+                }
+              </div>
+              <input type="text" name="" id="break" className="break" placeholder="" onChange={e => { this.formState.hpot = e.target.value }} style={{visibility: 'hidden'}}/>
+            </form>
           </div>
         </section>
 
@@ -93,6 +106,7 @@ const mapStateToProps = state => {
     about: state.about,
     show: state.show,
     pause: state.pause,
+    mailSent: state.mailSent
   };
 }
 
@@ -112,6 +126,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     onPause: () => {
       dispatch({type: actionTypes.ONPAUSE});
+    },
+    onSent: () => {
+      dispatch({type: actionTypes.ONSENT});
     },
   }
 }

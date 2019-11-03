@@ -7,3 +7,4 @@ export const ONPORTFOLIO = 'ONPORTFOLIO';
 export const ONCONTACT = 'ONCONTACT';
 export const ONPAUSE = 'ONPAUSE';
 export const ONSHOW = 'ONSHOW';
+export const ONSENT = 'ONSENT';

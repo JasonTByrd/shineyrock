@@ -8,7 +8,7 @@
     bottom: 73px;
     left: 50%;
     transform: translate(-50%, 0%);
-    background-color: rgba(36, 36, 36, 1.0);
+    background-color: rgba(36, 36, 36, 0.9);
     -ms-overflow-style: none;  /* IE 10+ */
     scrollbar-width: none;  /* Firefox */
     border-radius: 5px 5px 5px 5px;
@@ -81,7 +81,6 @@
     padding-left: 50px;
     padding-right: 50px;
     width: 100%;
-    background-color: rgba(36, 36, 36, 0.9);
     padding-bottom: 75px;
   }
   
@@ -130,7 +129,61 @@
   .show .what-i-do-text,
   .show .what-i-do-header,
   .show .what-i-do-header-2,
-  .show .contact-header {
+  .show .contact-header,
+  .show .contact-form {
     opacity: 1;
     filter: blur(0px);
   }
+
+  /************************************** CONTACT FORM *************************************/
+
+  .contact-form {
+    max-width: 90%;
+    width: 1080px;
+    margin: 0 auto;
+    filter: blur(5px);
+    transition: all 1s ease;
+    margin-top: 25px;
+  }
+
+  .contact-form input,
+  .contact-form textarea,
+  .form-message {
+    width: 60%;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    display: block;
+    min-height: 40px;
+    font-size: 15px;
+    box-shadow: none;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: rgba(36, 36, 36, 0.0) !important;
+    border: 1px solid #BBBBBB;
+    color: #FFFFFF;
+    transition: all 1s ease;
+  }
+
+  .form-message {
+    padding: 0px;
+    text-align: left;
+    border: 0px;
+    color: greenyellow;
+  }
+
+  .contact-form textarea {
+    min-height: 160px;
+  }
+
+  .contact-form .submit-input {
+    width: 120px;
+  }
+
+  .contact-form .submit-input:hover {
+    width: 120px;
+    background-color: rgba(86, 86, 86, 1.0) !important;
+    cursor: pointer;
+  }
+
+
+  /************************************** CONTACT FORM *************************************/
