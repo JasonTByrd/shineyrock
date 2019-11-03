@@ -169,10 +169,13 @@
     text-align: left;
     border: 0px;
     color: greenyellow;
+    min-height: unset;
   }
 
   .contact-form textarea {
     min-height: 160px;
+    padding-top: 15px;
+    padding-bottom: 15px;
   }
 
   .contact-form .submit-input {
@@ -183,6 +186,11 @@
     width: 120px;
     background-color: rgba(86, 86, 86, 1.0) !important;
     cursor: pointer;
+  }
+  
+  .break {
+    min-height: 0px !important;
+    height: 0px;
   }
 
 

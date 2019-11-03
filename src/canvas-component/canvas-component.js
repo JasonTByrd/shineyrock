@@ -125,6 +125,7 @@ class CanvasComponent extends Component {
   bloomParams;
   bloomParams02;
   ssaaRenderPass;
+  ssaaRenderPass02;
 
   times = [];
   fps;
@@ -449,14 +450,19 @@ class CanvasComponent extends Component {
     this.ssaaRenderPass.sampleLevel = 4;
     this.composer1.addPass( this.ssaaRenderPass );
 
+    this.ssaaRenderPass02 = new SSAARenderPass( this.scene, this.camera );
+    this.ssaaRenderPass02.unbiased = true;
+    this.ssaaRenderPass02.sampleLevel = 2;
+    this.composer2.addPass( this.ssaaRenderPass02 );
+
     //this.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.mount.offsetWidth * this.pixelRatio );
     //this.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.mount.offsetHeight * this.pixelRatio );
 
     //this.copyPass = new ShaderPass( CopyShader );
     //this.composer1.addPass( this.copyPass );
 
-    this.renderPass = new RenderPass( this.scene, this.camera );
-    this.composer2.addPass( this.renderPass );
+    // this.renderPass = new RenderPass( this.scene, this.camera );
+    // this.composer2.addPass( this.renderPass );
 
     this.bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
     this.bloomPass.threshold = this.bloomParams.bloomThreshold;
@@ -973,6 +979,7 @@ class CanvasComponent extends Component {
   }
 
   onWindowResize = () => {
+    document.querySelector('body').setAttribute('style', 'height: ' + window.innerHeight + 'px;');
     //console.log(this.mount.clientWidth, this.mount.clientHeight);
     this.camera.aspect = this.mount.clientWidth / this.mount.clientHeight;
     this.camera.updateProjectionMatrix();
