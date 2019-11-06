@@ -422,9 +422,11 @@ class CanvasComponent extends Component {
 
     if(!this.mobile && window.innerWidth > 1200) {
       this.camera.position.set(0, this.player.height, 15);
+      this.scene.fog = new THREE.FogExp2( 0x000000, 0.0175 );
     }
     else if (!this.mobile && window.innerWidth < 1200) {
       this.camera.position.set(0, this.player.height, 22);
+      this.scene.fog = new THREE.FogExp2( 0x000000, 0.0175 );
     }
     else if (this.mobile && window.innerHeight < 500) {
       this.setState(this.props.onMobile(this.payload));
@@ -434,12 +436,14 @@ class CanvasComponent extends Component {
     else if (this.mobile && window.innerWidth > 1200) {
       this.setState(this.props.onMobile(this.payload));
       this.camera.position.set(0, this.player.height, 15);
-      this.bloomParams.bloomThreshold = 0.7;
+      this.scene.fog = new THREE.FogExp2( 0x000000, 0.0175 );
+      this.bloomParams.bloomThreshold = 1;
     }
     else {
       this.camera.position.set(0, this.player.height, 22);
+      this.scene.fog = new THREE.FogExp2( 0x000000, 0.0175 );
       this.setState(this.props.onMobile(this.payload));
-      this.bloomParams.bloomThreshold = 0.5;
+      this.bloomParams.bloomThreshold = 1;
     }
 
     // this.bloomParams02 = {
@@ -1013,9 +1017,11 @@ class CanvasComponent extends Component {
     if (window.innerHeight < 500 && this.mobile) {
       this.camera.position.set(0, this.player.height, 10);
       this.bloomPass.threshold = 0.8;
+      this.scene.fog = new THREE.FogExp2( 0x000000, 0.0200 );
     } else if (window.innerHeight > 500 && this.mobile) {
       this.camera.position.set(0, this.player.height, 22);
       this.bloomPass.threshold = 0.7;
+      this.scene.fog = new THREE.FogExp2( 0x000000, 0.0175 );
     }
 
     //document.querySelector('body').setAttribute('style', 'height: ' + window.innerHeight + 'px;');
