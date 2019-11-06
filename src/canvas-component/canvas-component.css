@@ -1,13 +1,14 @@
 body { 
   margin: 0;
 }
+
 canvas {
   width: 100%;
-  height: 100vh !important;
   position: relative;
   border: solid 50px black;
   filter: blur(0px);
   transition: filter 1.0s ease;
+  top: 0px;
 }
 
 * {
@@ -41,7 +42,9 @@ canvas {
 
 .pickableCanvas {
   position: relative;
+  height: 100%;
   line-height: 0px; /*fix to make canvas same height as div, without this it expands based on line-height*/
+  z-index: 1;
 }
 
 .pickableCanvas:before {
@@ -80,7 +83,7 @@ canvas {
   opacity: 0.7;
 }
 
-.pickableCanvas .right-arrow {
+.App-header .right-arrow {
   width: 50px;
   height: 50px;
   position: absolute;
@@ -91,12 +94,12 @@ canvas {
   z-index: 2;
 }
 
-.pickableCanvas .right-arrow svg {
+.App-header .right-arrow svg {
   width: 50px;
   height: 50px;
 }
 
-.pickableCanvas .left-arrow {
+.App-header .left-arrow {
   width: 50px;
   height: 50px;
   position: absolute;
@@ -107,7 +110,7 @@ canvas {
   z-index: 2;
 }
 
-.pickableCanvas .left-arrow svg {
+.App-header .left-arrow svg {
   width: 50px;
   height: 50px;
 }
@@ -243,16 +246,16 @@ canvas {
   }
 }
 
-@media screen and (max-height: 400px) {
+@media screen and (max-height: 500px) {
   canvas {
     border: solid 5px black;
-    border-left-width: 50px;
-    border-right-width: 50px;
   }
 
   .pickableCanvas:before {
     border: solid 0.5px #666666;
     top: 5px;
     bottom: 5px;
+    left: 5px;
+    right: 5px;
   }
 }

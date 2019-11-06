@@ -133,3 +133,46 @@
   opacity: 1;
   filter: blur(0px);
 }
+
+@media screen and (max-width: 768px) {
+  .about-page-container {
+    max-width: 100%;
+  }
+  
+  .about-content .what-i-do-header,
+  .about-content .what-i-do-header-2,
+  .about-content .what-i-do-text {
+    max-width: 100%;
+    width: 1080px;
+  }
+
+  .about-content .what-i-do-header {
+    font-size: 30px;
+  }
+
+  .about-content .what-i-do-header-2 {
+    font-size: 20px;
+  }
+
+  .about-header {
+    height: 170px;
+  }
+
+  .about-header::after {
+    height: 170px;
+  }
+
+  .what-i-do {
+    padding-top: 10px;
+    padding-left: 25px;
+    padding-right: 25px;
+    width: 100%;
+    padding-bottom: 35px;
+  }
+}
+
+@media screen and (max-height: 500px) {
+  .about-page-container {
+    max-width: 100%;
+  }
+}

@@ -14,11 +14,13 @@ class AboutComponent extends Component {
   }
 
   closeMe = () => {
-    this.props.onShow();
-    // this.setState(this.props.onPause());
-    setTimeout(() => {
-      this.props.onAbout();
-    }, 1000);
+    if(this.props.show) {
+      this.props.onShow();
+      // this.setState(this.props.onPause());
+      setTimeout(() => {
+        this.props.onAbout();
+      }, 1000);
+    }
   }
 
   render() {

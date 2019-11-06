@@ -195,3 +195,81 @@
 
 
   /************************************** CONTACT FORM *************************************/
+
+
+  @media screen and (max-width: 768px) {
+
+    .contact-page-container {
+      max-width: 100%;
+    }
+
+    .show {
+      height: 100%;
+      bottom: 0px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .contact-header-image {
+      object-position: 90% 30%;
+    }
+
+    .contact-form {
+      max-width: 100%;
+      width: 1080px;
+      margin: 0 auto;
+      filter: blur(5px);
+      transition: all 1s ease;
+      margin-top: 25px;
+    }
+
+    .contact-form input,
+    .contact-form textarea,
+    .form-message {
+      width: 100%;
+    }
+
+    .contact-content .what-i-do-header,
+    .contact-content .what-i-do-header-2,
+    .contact-content .what-i-do-text {
+      max-width: 100%;
+      width: 1080px;
+    }
+  
+    .contact-content .what-i-do-header {
+      font-size: 30px;
+    }
+  
+    .contact-content .what-i-do-header-2 {
+      font-size: 20px;
+    }
+  
+    .contact-header {
+      height: 170px;
+    }
+  
+    .contact-header::after {
+      height: 170px;
+    }
+  
+    .what-i-do {
+      padding-top: 10px;
+      padding-left: 25px;
+      padding-right: 25px;
+      width: 100%;
+      padding-bottom: 35px;
+    }
+  }
+
+  @media screen and (max-height: 500px) {
+    .contact-page-container {
+      max-width: 100%;
+    }
+
+    .show {
+      height: 100%;
+      bottom: 0px;
+      width: 100%;
+      max-width: 100%;
+    }
+  }

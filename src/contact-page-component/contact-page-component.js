@@ -26,11 +26,13 @@ class ContactComponent extends Component {
   }
 
   closeMe = () => {
-    this.props.onShow();
-    // this.setState(this.props.onPause());
-    setTimeout(() => {
-      this.props.onContact();
-    }, 1000);
+    if(this.props.show) {
+      this.props.onShow();
+      // this.setState(this.props.onPause());
+      setTimeout(() => {
+        this.props.onContact();
+      }, 1000);
+    }
   }
 
   handleFormSubmit = ( event ) => {
