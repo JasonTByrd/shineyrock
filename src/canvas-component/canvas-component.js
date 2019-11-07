@@ -706,41 +706,41 @@ class CanvasComponent extends Component {
       
     }
 
-    if(this.textMesh.hovered === true && (this.textMaterial.color.r < 1 || this.textMaterial.color.g > 0.25 || this.textMaterial.color.b > 0.25)) {
-      this.pointLight02.color.r -= 0.00;
-      this.pointLight02.color.g -= 0.025;
-      this.pointLight02.color.b -= 0.025;
-      this.pointLight03.color.r -= 0.00;
-      this.pointLight03.color.g -= 0.025;
-      this.pointLight03.color.b -= 0.025;
-      this.pointLightOrb02.material.color.r -= 0.00;
-      this.pointLightOrb02.material.color.g -= 0.01;
-      this.pointLightOrb02.material.color.b -= 0.01;
-      this.pointLightOrb03.material.color.r -= 0.00;
-      this.pointLightOrb03.material.color.g -= 0.01;
-      this.pointLightOrb03.material.color.b -= 0.01;
+    // if(this.textMesh.hovered === true && (this.textMaterial.color.r < 1 || this.textMaterial.color.g > 0.25 || this.textMaterial.color.b > 0.25)) {
+    //   this.pointLight02.color.r -= 0.00;
+    //   this.pointLight02.color.g -= 0.025;
+    //   this.pointLight02.color.b -= 0.025;
+    //   this.pointLight03.color.r -= 0.00;
+    //   this.pointLight03.color.g -= 0.025;
+    //   this.pointLight03.color.b -= 0.025;
+    //   this.pointLightOrb02.material.color.r -= 0.00;
+    //   this.pointLightOrb02.material.color.g -= 0.01;
+    //   this.pointLightOrb02.material.color.b -= 0.01;
+    //   this.pointLightOrb03.material.color.r -= 0.00;
+    //   this.pointLightOrb03.material.color.g -= 0.01;
+    //   this.pointLightOrb03.material.color.b -= 0.01;
 
-      this.textMaterial.color.r += 0.025
-      this.textMaterial.color.g -= 0.025
-      this.textMaterial.color.b -= 0.025
-    } else if(this.textMesh.hovered === false && (this.textMaterial.color.r > 0.73 || this.textMaterial.color.g < 0.73 || this.textMaterial.color.b < 0.73)) {
-      this.pointLight02.color.r += 0.00;
-      this.pointLight02.color.g += 0.025;
-      this.pointLight02.color.b += 0.025;
-      this.pointLight03.color.r += 0.00;
-      this.pointLight03.color.g += 0.025;
-      this.pointLight03.color.b += 0.025;
-      this.pointLightOrb02.material.color.r += 0.00;
-      this.pointLightOrb02.material.color.g += 0.01;
-      this.pointLightOrb02.material.color.b += 0.01;
-      this.pointLightOrb03.material.color.r += 0.00;
-      this.pointLightOrb03.material.color.g += 0.01;
-      this.pointLightOrb03.material.color.b += 0.01;
+    //   this.textMaterial.color.r += 0.025
+    //   this.textMaterial.color.g -= 0.025
+    //   this.textMaterial.color.b -= 0.025
+    // } else if(this.textMesh.hovered === false && (this.textMaterial.color.r > 0.73 || this.textMaterial.color.g < 0.73 || this.textMaterial.color.b < 0.73)) {
+    //   this.pointLight02.color.r += 0.00;
+    //   this.pointLight02.color.g += 0.025;
+    //   this.pointLight02.color.b += 0.025;
+    //   this.pointLight03.color.r += 0.00;
+    //   this.pointLight03.color.g += 0.025;
+    //   this.pointLight03.color.b += 0.025;
+    //   this.pointLightOrb02.material.color.r += 0.00;
+    //   this.pointLightOrb02.material.color.g += 0.01;
+    //   this.pointLightOrb02.material.color.b += 0.01;
+    //   this.pointLightOrb03.material.color.r += 0.00;
+    //   this.pointLightOrb03.material.color.g += 0.01;
+    //   this.pointLightOrb03.material.color.b += 0.01;
 
-      this.textMaterial.color.r -= 0.025
-      this.textMaterial.color.g += 0.025
-      this.textMaterial.color.b += 0.025
-    }
+    //   this.textMaterial.color.r -= 0.025
+    //   this.textMaterial.color.g += 0.025
+    //   this.textMaterial.color.b += 0.025
+    // }
 
     if((this.textMesh03.hovered === true || (this.mobile && this.camera.rotation.y > 0.15)) && (this.textMaterial03.color.r > 0.35 || this.textMaterial03.color.g > 0.75 || this.textMaterial03.color.b < 1)) {
       this.pointLight02.color.r -= 0.02;
