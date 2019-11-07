@@ -8,3 +8,6 @@ export const ONCONTACT = 'ONCONTACT';
 export const ONPAUSE = 'ONPAUSE';
 export const ONSHOW = 'ONSHOW';
 export const ONSENT = 'ONSENT';
+export const PORTTRUE = 'PORTTRUE';
+export const ABTRUE = 'ABTRUE';
+export const COTRUE = 'COTRUE';

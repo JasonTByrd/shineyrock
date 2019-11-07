@@ -6,12 +6,23 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import reducer from './store/reducer';
+import { Route, BrowserRouter as Router } from 'react-router-dom'
+import AboutComponent from './about-page-component/about-page-component.js';
+import PortfolioComponent from './portfolio-page-component/portfolio-page-component.js';
+import ContactComponent from './contact-page-component/contact-page-component.js';
 
 const store = createStore(reducer);
 
 const app = (
     <Provider store={store}>
-        <App />
+        <Router>
+            <div>
+                <Route path="/" component={App} />
+                <Route path="/about" component={AboutComponent} />
+                <Route path="/portfolio" component={PortfolioComponent} />
+                <Route path="/contact" component={ContactComponent} />
+            </div>
+        </Router>
     </Provider>
 )
 

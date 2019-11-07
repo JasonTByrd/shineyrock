@@ -59,6 +59,21 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 mailSent: !state.mailSent
             };
+        case actionTypes.PORTTRUE:
+            return {
+                ...state,
+                portfolio: true
+            };
+        case actionTypes.ABTRUE:
+            return {
+                ...state,
+                about: true
+            };
+        case actionTypes.COTRUE:
+            return {
+                ...state,
+                contact: true
+            };
         default:
             return state;
     }

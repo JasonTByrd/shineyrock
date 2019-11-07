@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 //import logo from './logo.svg';
 import './App.css';
 import CanvasComponent from './canvas-component/canvas-component.js';
-import AboutComponent from './about-page-component/about-page-component.js';
-import PortfolioComponent from './portfolio-page-component/portfolio-page-component.js';
-import ContactComponent from './contact-page-component/contact-page-component.js';
 import { connect } from 'react-redux';
 import * as actionTypes from './store/actions';
+import  { Redirect } from 'react-router-dom'
 
 class App extends Component {
 
@@ -27,9 +25,9 @@ class App extends Component {
         </a> */}
         <CanvasComponent></CanvasComponent>
       </header>
-      {this.props.about && <AboutComponent></AboutComponent>}
-      {this.props.portfolio && <PortfolioComponent></PortfolioComponent>}
-      {this.props.contact && <ContactComponent></ContactComponent>}
+      {this.props.about && <Redirect to='/about' />}
+      {this.props.portfolio && <Redirect to='/portfolio' />}
+      {this.props.contact && <Redirect to='/contact' />}
     </div>
   ) }
 }

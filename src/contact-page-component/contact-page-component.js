@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import * as actionTypes from '../store/actions';
 import contactHeaderImage from '../assets/images/contact-header.jpg';
 import axios from 'axios';
+import  { Redirect } from 'react-router-dom'
 
 const API_PATH = 'https://shineyrock.org/api/contact/index.php';
 
@@ -17,8 +18,10 @@ class ContactComponent extends Component {
     error: null,
     hpot: '',
   }
+  close = false;
 
   componentDidMount() {
+    this.props.onConTrue();
     setTimeout(() => {
       this.props.onShow();
       console.log(this.props.show);
@@ -30,6 +33,7 @@ class ContactComponent extends Component {
       this.props.onShow();
       // this.setState(this.props.onPause());
       setTimeout(() => {
+        this.close = true;
         this.props.onContact();
       }, 1000);
     }
@@ -61,6 +65,7 @@ class ContactComponent extends Component {
   render() {
     return (
       <div className={!this.props.show ? "contact-page-container" : "contact-page-container show"}>
+        {this.close && <Redirect to='/' />}
         <div className="close-me" onClick={e => this.closeMe(e)}>
           <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="window-close" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="svg-inline--fa fa-window-close fa-w-16 fa-9x"><path fill="currentColor" d="M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 394c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h404c3.3 0 6 2.7 6 6v340zM356.5 194.6L295.1 256l61.4 61.4c4.6 4.6 4.6 12.1 0 16.8l-22.3 22.3c-4.6 4.6-12.1 4.6-16.8 0L256 295.1l-61.4 61.4c-4.6 4.6-12.1 4.6-16.8 0l-22.3-22.3c-4.6-4.6-4.6-12.1 0-16.8l61.4-61.4-61.4-61.4c-4.6-4.6-4.6-12.1 0-16.8l22.3-22.3c4.6-4.6 12.1-4.6 16.8 0l61.4 61.4 61.4-61.4c4.6-4.6 12.1-4.6 16.8 0l22.3 22.3c4.7 4.6 4.7 12.1 0 16.8z" className=""></path></svg>
         </div>
@@ -131,6 +136,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     onSent: () => {
       dispatch({type: actionTypes.ONSENT});
+    },
+    onConTrue: () => {
+      dispatch({type: actionTypes.COTRUE});
     },
   }
 }
