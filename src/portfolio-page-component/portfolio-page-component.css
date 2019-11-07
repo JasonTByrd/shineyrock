@@ -207,6 +207,10 @@
     transition: all 1s ease;
   }
 
+  .code-icon svg {
+    pointer-events: none;
+  }
+
   .item-link {
     text-decoration: none;
     text-shadow: 0px 0px 2px black;

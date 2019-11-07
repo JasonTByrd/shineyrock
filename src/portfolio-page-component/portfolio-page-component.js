@@ -9,6 +9,10 @@ import pickHelperImage from '../assets/images/pick-helper.jpg';
 
 class PortfolioComponent extends Component {
 
+  details01
+  details02
+  details03
+
   componentDidMount() {
     setTimeout(() => {
       this.props.onShow();
@@ -30,11 +34,13 @@ class PortfolioComponent extends Component {
     event.stopPropagation();
   }
 
-  detailsClick = (e) => {
+  detailsClick = (e, parent) => {
+    console.log(parent)
     if(this.props.mobile) {
-      if (e.target.getAttribute('touched') === 'true') {
+      if (e.target.getAttribute('touched') === 'true' && (e.target.getAttribute('href') !== false || e.target.getAttribute('fill') !== false)) {
       }
       else {
+        e.preventDefault();
         let items = document.querySelectorAll('.item-link');
         items.forEach(item => {
           item.setAttribute('touched', 'false');
@@ -43,8 +49,19 @@ class PortfolioComponent extends Component {
         icons.forEach(icon => {
           icon.setAttribute('touched', 'false');
         })
-        e.target.setAttribute('touched', 'true');
-        e.preventDefault();
+        if(e.target.getAttribute('href') === false) {
+          let links = e.target.querySelectorAll('a');
+          links.forEach(link => {
+            link.setAttribute('touched', 'true')
+          });
+        }
+        else {
+          let links = parent.querySelectorAll('a');
+
+          links.forEach(link => {
+            link.setAttribute('touched', 'true')
+          })
+        }
       }
     } else {
     }
@@ -76,9 +93,9 @@ class PortfolioComponent extends Component {
               <div className="portfolio-grid-item">
                 <img src={portfolioImageOne} className="portfolio-image" alt="shineyrock.org thumbnail">
                 </img>
-                <div className="portfolio-item-details">
-                  <a href="https://shineyrock.org" className="item-link" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e)}>shineyrock.org</a>
-                  <a href="https://github.com/JasonTByrd/shineyrock" className="code-icon" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e)}>
+                <div className="portfolio-item-details" ref={ref => (this.details01 = ref)} onClick={e => this.detailsClick(e, this.details01)}>
+                  <a href="https://shineyrock.org" className="item-link" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e, this.details01)}>shineyrock.org</a>
+                  <a href="https://github.com/JasonTByrd/shineyrock" className="code-icon" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e, this.details01)}>
                     <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="code" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" className="svg-inline--fa fa-code fa-w-20 fa-9x"><path fill="currentColor" d="M278.9 511.5l-61-17.7c-6.4-1.8-10-8.5-8.2-14.9L346.2 8.7c1.8-6.4 8.5-10 14.9-8.2l61 17.7c6.4 1.8 10 8.5 8.2 14.9L293.8 503.3c-1.9 6.4-8.5 10.1-14.9 8.2zm-114-112.2l43.5-46.4c4.6-4.9 4.3-12.7-.8-17.2L117 256l90.6-79.7c5.1-4.5 5.5-12.3.8-17.2l-43.5-46.4c-4.5-4.8-12.1-5.1-17-.5L3.8 247.2c-5.1 4.7-5.1 12.8 0 17.5l144.1 135.1c4.9 4.6 12.5 4.4 17-.5zm327.2.6l144.1-135.1c5.1-4.7 5.1-12.8 0-17.5L492.1 112.1c-4.8-4.5-12.4-4.3-17 .5L431.6 159c-4.6 4.9-4.3 12.7.8 17.2L523 256l-90.6 79.7c-5.1 4.5-5.5 12.3-.8 17.2l43.5 46.4c4.5 4.9 12.1 5.1 17 .6z" className=""></path></svg>
                   </a>
                 </div>
@@ -86,9 +103,9 @@ class PortfolioComponent extends Component {
               <div className="portfolio-grid-item">
                 <img src={threeJsPlayground} className="portfolio-image" alt="shineyrock.org thumbnail">
                 </img>
-                <div className="portfolio-item-details">
-                  <a href="https://codepen.io/jasontbyrd/full/XWraGZK" className="item-link" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e)}>Three JS Playground</a>
-                  <a href="https://codepen.io/jasontbyrd/pen/XWraGZK" className="code-icon" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e)}>
+                <div className="portfolio-item-details" ref={ref => (this.details02 = ref)} onClick={e => this.detailsClick(e, this.details02)}>
+                  <a href="https://codepen.io/jasontbyrd/full/XWraGZK" className="item-link" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e, this.details02)}>Three JS Playground</a>
+                  <a href="https://codepen.io/jasontbyrd/pen/XWraGZK" className="code-icon" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e, this.details02)}>
                     <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="code" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" className="svg-inline--fa fa-code fa-w-20 fa-9x"><path fill="currentColor" d="M278.9 511.5l-61-17.7c-6.4-1.8-10-8.5-8.2-14.9L346.2 8.7c1.8-6.4 8.5-10 14.9-8.2l61 17.7c6.4 1.8 10 8.5 8.2 14.9L293.8 503.3c-1.9 6.4-8.5 10.1-14.9 8.2zm-114-112.2l43.5-46.4c4.6-4.9 4.3-12.7-.8-17.2L117 256l90.6-79.7c5.1-4.5 5.5-12.3.8-17.2l-43.5-46.4c-4.5-4.8-12.1-5.1-17-.5L3.8 247.2c-5.1 4.7-5.1 12.8 0 17.5l144.1 135.1c4.9 4.6 12.5 4.4 17-.5zm327.2.6l144.1-135.1c5.1-4.7 5.1-12.8 0-17.5L492.1 112.1c-4.8-4.5-12.4-4.3-17 .5L431.6 159c-4.6 4.9-4.3 12.7.8 17.2L523 256l-90.6 79.7c-5.1 4.5-5.5 12.3-.8 17.2l43.5 46.4c4.5 4.9 12.1 5.1 17 .6z" className=""></path></svg>
                   </a>
                 </div>
@@ -96,9 +113,9 @@ class PortfolioComponent extends Component {
               <div className="portfolio-grid-item">
                 <img src={pickHelperImage} className="portfolio-image" alt="shineyrock.org thumbnail">
                 </img>
-                <div className="portfolio-item-details" onClick={e => this.detailsClick(e)}>
-                  <a href="https://github.com/JasonTByrd/pick-helper" className="item-link" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e)}>Pick Helper</a>
-                  <a href="https://github.com/JasonTByrd/pick-helper" className="code-icon" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e)}>
+                <div className="portfolio-item-details" ref={ref => (this.details03 = ref)} onClick={e => this.detailsClick(e, this.details03)}>
+                  <a href="https://github.com/JasonTByrd/pick-helper" className="item-link" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e, this.details03)}>Pick Helper</a>
+                  <a href="https://github.com/JasonTByrd/pick-helper" className="code-icon" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e, this.details03)}>
                     <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="code" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" className="svg-inline--fa fa-code fa-w-20 fa-9x"><path fill="currentColor" d="M278.9 511.5l-61-17.7c-6.4-1.8-10-8.5-8.2-14.9L346.2 8.7c1.8-6.4 8.5-10 14.9-8.2l61 17.7c6.4 1.8 10 8.5 8.2 14.9L293.8 503.3c-1.9 6.4-8.5 10.1-14.9 8.2zm-114-112.2l43.5-46.4c4.6-4.9 4.3-12.7-.8-17.2L117 256l90.6-79.7c5.1-4.5 5.5-12.3.8-17.2l-43.5-46.4c-4.5-4.8-12.1-5.1-17-.5L3.8 247.2c-5.1 4.7-5.1 12.8 0 17.5l144.1 135.1c4.9 4.6 12.5 4.4 17-.5zm327.2.6l144.1-135.1c5.1-4.7 5.1-12.8 0-17.5L492.1 112.1c-4.8-4.5-12.4-4.3-17 .5L431.6 159c-4.6 4.9-4.3 12.7.8 17.2L523 256l-90.6 79.7c-5.1 4.5-5.5 12.3-.8 17.2l43.5 46.4c4.5 4.9 12.1 5.1 17 .6z" className=""></path></svg>
                   </a>
                 </div>

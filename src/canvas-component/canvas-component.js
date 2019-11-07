@@ -623,7 +623,7 @@ class CanvasComponent extends Component {
 
     requestAnimationFrame(this.animate);
 
-    if (this.props.paused) {
+    if (this.props.mobile && (this.props.about || this.props.contact || this.props.portfolio)) {
       return;
     }
 
@@ -1034,6 +1034,8 @@ class CanvasComponent extends Component {
     //this.pixelRatio = this.renderer.getPixelRatio();
     //this.fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( this.mount.offsetWidth * this.pixelRatio );
     //this.fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( this.mount.offsetHeight * this.pixelRatio );
+
+    this.composer2.render();
   }
 
   turnRight = (event) => {

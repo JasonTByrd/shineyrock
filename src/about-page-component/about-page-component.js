@@ -72,7 +72,7 @@ class AboutComponent extends Component {
               WHO I AM
             </h1>
             <p className="what-i-do-text">
-              My name is Jason, am an avid tech enthusiast and lover of all things complex. I have a rabid thirst for knowledge and I feel if I'm not learning I'm stagnating, so I seek to advance my knowledge and understanding of things I'm passionate about constantly.
+              My name is Jason, I am an avid tech enthusiast and lover of all things complex. I have a rabid thirst for knowledge and I feel if I'm not learning I'm stagnating, so I seek to advance my knowledge and understanding of things I'm passionate about constantly.
             </p>
             <h2 className="what-i-do-header-2">
               Technology Is In My Blood
