@@ -650,7 +650,7 @@ class CanvasComponent extends Component {
     this.backgroundOrb.rotation.y += 0.0002;
     // this.backgroundOrb.rotation.z += 0.0002;
 
-    if (this.pointerLockedStatus) {
+    if (this.pointerLockedStatus || this.props.mobile) {
       let picked = this.pickHelper.pickCenter(this.scene, this.camera, this.mount);
 
       if (picked === this.textContainerLogo && picked !== false) {
@@ -941,7 +941,7 @@ class CanvasComponent extends Component {
   }
 
   mouseMoveSelection = (event) => {
-    if (this.pointerLockedStatus) {
+    if (this.pointerLockedStatus || this.props.mobile) {
     } else {
       if(this.props.about || this.props.portfolio || this.props.contact) {
         return 0;
@@ -1002,17 +1002,18 @@ class CanvasComponent extends Component {
   }
 
   onWindowResize = () => {
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
     // let vh = window.innerHeight * 0.01;
     // Then we set the value in the --vh custom property to the root of the document
     // document.documentElement.style.setProperty('--vh', `${vh}px`);
 
-    var vhHeight = document.querySelector("body").offsetHeight;
-    console.log(document.querySelector('body').offsetHeight, window.innerHeight)
-    var chromeNavbarHeight = vhHeight - window.innerHeight;
-    document.querySelector('body').setAttribute('style', 'height: ' + window.innerHeight + 'px; margin-top: ' + chromeNavbarHeight + ';');
-    document.querySelector('.App-header').setAttribute('style', 'height: ' + window.innerHeight + 'px; margin-top: ' + chromeNavbarHeight + ';');
-    document.querySelector('.page-container').setAttribute('style', 'height: ' + window.innerHeight + 'px; margin-top: ' + chromeNavbarHeight + ';');
+    // var vhHeight = document.querySelector("body").offsetHeight;
+    // console.log(document.querySelector('body').offsetHeight, window.innerHeight)
+    // var chromeNavbarHeight = vhHeight - window.innerHeight;
+    // document.querySelector('body').setAttribute('style', 'height: ' + window.innerHeight + 'px; margin-top: ' + chromeNavbarHeight + ';');
+    // document.querySelector('.App-header').setAttribute('style', 'height: ' + window.innerHeight + 'px; margin-top: ' + chromeNavbarHeight + ';');
+    // document.querySelector('.page-container').setAttribute('style', 'height: ' + window.innerHeight + 'px; margin-top: ' + chromeNavbarHeight + ';');
 
     if (window.innerHeight < 500 && this.mobile) {
       this.camera.position.set(0, this.player.height, 10);
