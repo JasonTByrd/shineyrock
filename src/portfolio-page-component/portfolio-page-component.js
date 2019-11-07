@@ -95,7 +95,7 @@ class PortfolioComponent extends Component {
             </p>
             <div className="portfolio-grid-body">
               <div className="portfolio-grid-item">
-                <img src={portfolioImageOne} className="portfolio-image" alt="shineyrock.org thumbnail">
+                <img key={new Date()} src={portfolioImageOne} className="portfolio-image" alt="shineyrock.org thumbnail">
                 </img>
                 <div className="portfolio-item-details" ref={ref => (this.details01 = ref)} onClick={e => this.detailsClick(e, this.details01)}>
                   <a href="https://shineyrock.org" className="item-link" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e, this.details01)}>shineyrock.org</a>
@@ -105,7 +105,7 @@ class PortfolioComponent extends Component {
                 </div>
               </div>
               <div className="portfolio-grid-item">
-                <img src={threeJsPlayground} className="portfolio-image" alt="shineyrock.org thumbnail">
+                <img key={new Date()} src={threeJsPlayground} className="portfolio-image" alt="shineyrock.org thumbnail">
                 </img>
                 <div className="portfolio-item-details" ref={ref => (this.details02 = ref)} onClick={e => this.detailsClick(e, this.details02)}>
                   <a href="https://codepen.io/jasontbyrd/full/XWraGZK" className="item-link" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e, this.details02)}>Three JS Playground</a>
@@ -115,7 +115,7 @@ class PortfolioComponent extends Component {
                 </div>
               </div>
               <div className="portfolio-grid-item">
-                <img src={pickHelperImage} className="portfolio-image" alt="shineyrock.org thumbnail">
+                <img key={new Date()} src={pickHelperImage} className="portfolio-image" alt="shineyrock.org thumbnail">
                 </img>
                 <div className="portfolio-item-details" ref={ref => (this.details03 = ref)} onClick={e => this.detailsClick(e, this.details03)}>
                   <a href="https://github.com/JasonTByrd/pick-helper" className="item-link" target="_blank" rel="noopener noreferrer" onClick={e => this.detailsClick(e, this.details03)}>Pick Helper</a>
