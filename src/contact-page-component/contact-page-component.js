@@ -88,7 +88,7 @@ class ContactComponent extends Component {
               <input type="text" name="" id="fname" className="name-input input-field" placeholder="First Name *" onChange={e => { this.formState.fname = e.target.value }}/>
               <input type="text" name="" id="lname" className="name-input input-field" placeholder="Last Name" onChange={e => { this.formState.lname = e.target.value }}/>
               <input type="email" name="" id="email" autoCapitalize="none" autoCorrect="off" className="email-input input-field" placeholder="E-mail (example@example.com) *" onChange={e => { this.formState.email = e.target.value }}/>
-              <textarea key={new Date()} style="transform: translateZ(0);" name="" id="message" className="message-input input-field--multiline" placeholder="Your Message *" onChange={e => { this.formState.message = e.target.value }}></textarea>
+              <textarea key={new Date()} name="" id="message" className="message-input input-field--multiline" placeholder="Your Message *" onChange={e => { this.formState.message = e.target.value }}></textarea>
               <input type="submit" onClick={e => this.handleFormSubmit(e)} value="Submit" className="submit-input"/>
               <div className="form-message">
                 {this.props.mailSent &&
