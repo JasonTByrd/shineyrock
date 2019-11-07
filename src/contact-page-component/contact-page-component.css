@@ -137,6 +137,10 @@
 
   /************************************** CONTACT FORM *************************************/
 
+  textarea {
+    transform: translateZ(0);
+  }
+
   .contact-form {
     max-width: 90%;
     width: 1080px;
