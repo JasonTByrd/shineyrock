@@ -24,7 +24,6 @@ class ContactComponent extends Component {
     this.props.onConTrue();
     setTimeout(() => {
       this.props.onShow();
-      console.log(this.props.show);
     }, 0);
   }
 

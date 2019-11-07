@@ -146,7 +146,6 @@ class CanvasComponent extends Component {
 
     setTimeout(() => {
       this.fpsParse = this.fps;
-      console.log(this.fpsParse);
     }, 3000);
 
     window.addEventListener('mousemove', this.mouseMoveSelection);
@@ -597,7 +596,7 @@ class CanvasComponent extends Component {
 
     this.mount.addEventListener('click', this.clickOnObject, false);
 
-    console.log(document.querySelector('.right-arrow'));
+    window.addEventListener('click', this.clickOnObject);
 
     document.addEventListener('pointerlockchange', this.pointerLocked);
 
@@ -901,6 +900,7 @@ class CanvasComponent extends Component {
 
   controlsClick = (event) => {
     if (!this.props.mobile) {
+      this.controls.connect();
       this.controls.lock(false);
     }
   }
@@ -912,8 +912,15 @@ class CanvasComponent extends Component {
 
     var picked;
 
-    if(!this.mobile) {
+    if(!this.mobile && !this.pointerLockedStatus) {
       picked = this.pickHelper.pick(event, this.scene, this.camera, this.mount);
+    } else if(this.pointerLockedStatus) {
+      picked = this.pickHelper.pickCenter(this.scene, this.camera, this.mount);
+      this.controls.disconnect();
+      this.controls.unlock(false);
+      // setTimeout(() => {
+      //   this.camera.lookAt(picked.position);
+      // }, 0);
     } else {
       picked = this.pickHelper.pickCenter(this.scene, this.camera, this.mount);
     }
@@ -997,7 +1004,6 @@ class CanvasComponent extends Component {
     if (!this.props.mobile) {
       this.pointerLockedStatus = !this.pointerLockedStatus;
       this.setState(this.props.onTrueFalse(this.payload));
-      console.log(this.pointerLockedStatus, this.props.cross);
     }
   }
 
@@ -1043,7 +1049,6 @@ class CanvasComponent extends Component {
     if (this.turningRight === false && this.turningLeft === false) {
       this.turningRight = true;
       this.cameraOriginalRotation = this.camera.rotation.y;
-      console.log(this.turningRight);
     }
     event.stopPropagation();
   }

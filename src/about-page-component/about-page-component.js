@@ -13,7 +13,6 @@ class AboutComponent extends Component {
     this.props.onAbTrue();
     setTimeout(() => {
       this.props.onShow();
-      console.log(this.props.show);
     }, 0);
   }
 

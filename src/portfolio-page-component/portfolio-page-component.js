@@ -19,7 +19,6 @@ class PortfolioComponent extends Component {
     this.props.onPortTrue();
     setTimeout(() => {
       this.props.onShow();
-      console.log(this.props.show);
     }, 0);
   }
 
