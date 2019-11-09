@@ -16,7 +16,7 @@ Having needed a new portfolio site I began work on my new page in early Septembe
 
 2. React Redux
 
-3. Reach Router DOM
+3. React Router DOM
 
 4. three.js
 
