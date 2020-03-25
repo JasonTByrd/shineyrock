@@ -129,7 +129,7 @@ class PortfolioComponent extends Component {
               Work Projects
             </h2>
             <p className="what-i-do-text">
-              Projects I was either heavily involved in and/or the primary developer on.
+              Projects I was either heavily involved in and/or the primary developer on. I most likely do not own the rights to the code within these projects and as such I cannot provide links to it. However, you can likely find it via source maps or files if you inspect the linked pages.
             </p>
             <div className="portfolio-grid-body">
               <div className="portfolio-grid-item">
