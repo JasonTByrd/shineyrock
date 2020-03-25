@@ -34,7 +34,6 @@
   width: 100%;
   height: 320px;
   margin-bottom: -50px;
-  filter: blur(5px);
   transition: all 1s ease;
 }
 
@@ -80,7 +79,6 @@
   transition: all 1s ease !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  filter: blur(5px);
 }
 
 .what-i-do-header-2 {
@@ -94,7 +92,6 @@
   transition: all 1s ease !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  filter: blur(5px);
 }
 
 .what-i-do-text {
@@ -106,7 +103,6 @@
   transition: all 1s ease !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  filter: blur(5px);
 }
 
 .show .what-i-do-text,
@@ -114,7 +110,6 @@
 .show .what-i-do-header-2,
 .show .about-header {
   opacity: 1;
-  filter: blur(0px);
 }
 
 @media screen and (max-width: 768px) {

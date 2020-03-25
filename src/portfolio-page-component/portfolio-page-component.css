@@ -34,7 +34,6 @@
     width: 100%;
     height: 320px;
     margin-bottom: -50px;
-    filter: blur(5px);
     transition: all 1s ease;
   }
   
@@ -80,7 +79,6 @@
     transition: all 1s ease !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    filter: blur(5px);
   }
   
   .what-i-do-header-2 {
@@ -94,7 +92,6 @@
     transition: all 1s ease !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    filter: blur(5px);
   }
   
   .what-i-do-text {
@@ -106,7 +103,6 @@
     transition: all 1s ease !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    filter: blur(5px);
   }
   
   .show .what-i-do-text,
@@ -115,7 +111,6 @@
   .show .portfolio-grid-body,
   .show .portfolio-header {
     opacity: 1;
-    filter: blur(0px);
   }
 
   /******************************** PORTFOLIO SPECIFIC ****************************************/
@@ -129,7 +124,6 @@
     width: 1080px;
     margin: 0 auto;
     margin-top: 50px;
-    filter: blur(5px);
     opacity: 0;
     transition: all 1s ease;
   }
@@ -144,12 +138,10 @@
 
   .portfolio-grid-item:hover .portfolio-image {
     transform: scale(1.05);
-    filter: blur(5px);
   }
 
   .portfolio-grid-item:hover .portfolio-item-details {
     opacity: 1;
-    filter: blur(0px);
     pointer-events: auto;
   }
 
@@ -170,7 +162,6 @@
     width: 100%;
     height: 100%;
     opacity: 0;
-    filter: blur(5px);
     transition: all 1s ease;
     pointer-events: none;
   }

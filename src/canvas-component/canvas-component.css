@@ -6,7 +6,6 @@ canvas {
   width: 100%;
   position: relative;
   border: solid 50px black;
-  filter: blur(0px);
   transition: filter 1.0s ease;
   top: 0px;
 }

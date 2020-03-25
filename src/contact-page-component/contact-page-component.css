@@ -34,7 +34,6 @@
     width: 100%;
     height: 320px;
     margin-bottom: -50px;
-    filter: blur(5px);
     transition: all 1s ease;
   }
   
@@ -98,7 +97,6 @@
     transition: all 1s ease !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    filter: blur(5px);
   }
   
   .what-i-do-header-2 {
@@ -112,7 +110,6 @@
     transition: all 1s ease !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    filter: blur(5px);
   }
   
   .what-i-do-text {
@@ -124,7 +121,6 @@
     transition: all 1s ease !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    filter: blur(5px);
   }
   
   .show .what-i-do-text,
@@ -133,7 +129,6 @@
   .show .contact-header,
   .show .contact-form {
     opacity: 1;
-    filter: blur(0px);
   }
 
   /************************************** CONTACT FORM *************************************/
@@ -146,7 +141,6 @@
     max-width: 90%;
     width: 1080px;
     margin: 0 auto;
-    filter: blur(5px);
     transition: all 1s ease;
     margin-top: 25px;
   }
@@ -224,7 +218,6 @@
       max-width: 100%;
       width: 1080px;
       margin: 0 auto;
-      filter: blur(5px);
       transition: all 1s ease;
       margin-top: 25px;
     }
